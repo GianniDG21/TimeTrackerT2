@@ -1,38 +1,47 @@
 #user.py
 
+import data
+
 user_base="Guest"
 act_user=""
 
 user_list=[]
 
-last_user=""
+last_user="" 
 
 def register_user(): #COMPLETA
     global user_list
     print("Benvenuto nella registrazione utente")
-    new_user = input("Inserisci il nome del nuovo utente")
-    if new_user in user_list:
+    new_user = input("Inserisci il nome del nuovo utente ")
+    if new_user in data.load_user():
         reply = input("Questo utente esiste gia', vuoi fare il login? (s/n)")
         if reply == 's':
             login_user()
         else:
-            print("Ritorno alla procedura di registrazine")
-            register_user()
+            print("Procederemo con account Ospite")
+            act_user = user_base
     else:
         user_list.append(new_user)
+        data.save_user(user_list)
         print(f"Utente {new_user} registrato correttamente")
             
 
-def login_user():   #PLACEHOLDER
+def login_user():   #COMPLETA
     print("Benvenuto nel login utenti\n")
-    if user_list == []:
-        print("Non ci sono utenti registrati, per favore procedi alla registrazione")
-        import time
-        time.sleep(2)
+    data.load_user()
+    if data.load_user == []:
+        print("Nessun utente registrato, procedo con la registrazione")
         register_user()
     else:
-        for user in user_list:
-            print(user)
+        for user in data.load_user():
+            print(f"Utente registrato: {user}")
+        login = input("Inserisci il nome utente per il login: ")
+        if login in data.load_user():
+            act_user = login
+            print(f"Login effettuato come {act_user}")
+        else:
+            print("Utente non trovato, procedo con la registrazione")
+            register_user()
 
 def user_check():   #FUNZIONE PRINCIPALE
     if last_user=="" :
