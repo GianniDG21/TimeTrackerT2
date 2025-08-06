@@ -50,6 +50,8 @@ def user_check():   #FUNZIONE PRINCIPALE
             register_user()
         else :
             print("Continueremo come account Ospite")
+            global act_user
+            act_user = user_base
     else:
         print(f"L'ultimo utente e' stato {last_user}")
         reply = input(f"Vuoi proeguire come {last_user}? (s/n)")
