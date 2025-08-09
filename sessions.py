@@ -12,7 +12,7 @@ def start_session(materia, durata):
     print(f"Materia: {materia}")
     print(f"Durata: {durata} minuti")
     timer_script.avvia_timer(materia, int(durata))
-    dataM.save_session(user.act_user, materia, durata)
+    dataM.save_session(user.act_user, materia, int(durata))
     print("Sessione completata!")
     time.sleep(2)  # Pausa per la visualizzazione
 

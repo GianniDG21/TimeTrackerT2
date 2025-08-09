@@ -40,7 +40,7 @@ def save_session(user, materia, durata):
     session = {
         'user': user,
         'materia': materia,
-        'durata': durata
+        'durata': int(durata)
     }
     try:
         with open('sessions.json', 'a') as f:
