@@ -2,6 +2,7 @@
 #=====IMPORTS=====
 import user
 import sessions
+import subj
 
 version = "1.0.2"
 
@@ -13,7 +14,7 @@ def menu():
     print("3. Analytics") #Da implementare
     print("4. Aggiungi materia\n") #Da implementare
     print("5. Impostazioni") #Da implementare
-    scelta = input("Inserisci il numero della tua scelta: ")
+    scelta = int(input("Inserisci il numero della tua scelta: "))
     match scelta:
         case 1:
             print("Nuova sessione\n")
@@ -24,7 +25,8 @@ def menu():
         case 3:
             print("Analytics\n") #da implementare
         case 4:
-            print("Aggiungi materia\n") #da implementare
+            print("Aggiungi materia\n")
+            subj.manage_subjects()
         case 5:
             print("Impostazioni\n") #da implementare
 def quit():
@@ -34,13 +36,6 @@ def quit():
 #=====INTRO CODICE======
 print("Benvenuto in TimeTrackerT")
 print(version)
-user.user_check()
+print("Questa versione del codice e' esclusiva per Gianni")
 
-#=====MAIN LOOP=====
 menu()
-
-scelta = input("Vuoi uscire? (s/n) ")
-if scelta == 's':
-    quit()
-else:
-    menu()

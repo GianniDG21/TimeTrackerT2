@@ -1,20 +1,26 @@
 #new_session.py
 
+import time
 import user
-import subj
-import data
+import timer_script
+import dataM
+
 
 def start_session(materia, durata):
-    print("\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     print(f"Sessione in avvio.")
     print(f"Materia: {materia}")
     print(f"Durata: {durata} minuti")
-    #start timer logic
+    timer_script.avvia_timer(materia, int(durata))
+    dataM.save_session(user.act_user, materia, durata)
+    print("Sessione completata!")
+    time.sleep(2)  # Pausa per la visualizzazione
 
-def start(): 
-    print("\n\n\n\n\n\n\n\n\n\n\n\n\n")
+
+def start():
+    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     print(f"Ok {user.act_user}, iniziamo una nuova sessione")
-    materie_utente = data.load_subjects(user.act_user)
+    materie_utente = dataM.load_subjects(user.act_user)
     print("Materie disponibili:")
     if materie_utente:
         for subject in materie_utente:
@@ -26,4 +32,6 @@ def start():
         start_session(materia, durata)
     else:
         print("Materia non trovata, riprova.")
-        start()
+        print("Prova ad aggiungere la materia dal menu principale.")
+        time.sleep(2)
+    print("CHECKPOINT DEF START FINE")

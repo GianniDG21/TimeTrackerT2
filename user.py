@@ -1,19 +1,23 @@
 #user.py
 
-import data
+#MOMENTANEAMENTE DISATTIVATO
 
-user_base="Guest"
-act_user=""
+import dataM
+global act_user
+global last_user
+
+user_base="Gianni"
+act_user="Gianni"
 
 user_list=[]
 
-last_user="" 
+last_user="Gianni"
 
 def register_user(): #COMPLETA
     global user_list
     print("Benvenuto nella registrazione utente")
     new_user = input("Inserisci il nome del nuovo utente ")
-    if new_user in data.load_user():
+    if new_user in dataM.load_user():
         reply = input("Questo utente esiste gia', vuoi fare il login? (s/n)")
         if reply == 's':
             login_user()
@@ -22,21 +26,21 @@ def register_user(): #COMPLETA
             act_user = user_base
     else:
         user_list.append(new_user)
-        data.save_user(user_list)
+        dataM.save_user(user_list)
         print(f"Utente {new_user} registrato correttamente")
             
 
 def login_user():   #COMPLETA
     print("Benvenuto nel login utenti\n")
-    data.load_user()
-    if data.load_user == []:
+    dataM.load_user()
+    if dataM.load_user == []:
         print("Nessun utente registrato, procedo con la registrazione")
         register_user()
     else:
-        for user in data.load_user():
+        for user in dataM.load_user():
             print(f"Utente registrato: {user}")
         login = input("Inserisci il nome utente per il login: ")
-        if login in data.load_user():
+        if login in dataM.load_user():
             act_user = login
             print(f"Login effettuato come {act_user}")
         else:
