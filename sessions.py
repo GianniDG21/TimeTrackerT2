@@ -14,6 +14,15 @@ def start_session(materia, durata):
     timer_script.avvia_timer(materia, int(durata))
     dataM.save_session(user.act_user, materia, int(durata))
     print("Sessione completata!")
+    print(f"Vuoi fare una pausa? (s/n)")
+    risposta = input().strip().lower()
+    if risposta == "s":
+        risposta = input("Di quanto tempo?")
+        durata_pausa = int(risposta)
+        timer_script.avvia_timer("PAUSA", durata_pausa)
+        dataM.save_session(user.act_user, "PAUSA", durata_pausa)
+    else:
+        print("Nessuna pausa programmata.")
     time.sleep(2)  # Pausa per la visualizzazione
 
 
@@ -34,4 +43,4 @@ def start():
         print("Materia non trovata, riprova.")
         print("Prova ad aggiungere la materia dal menu principale.")
         time.sleep(2)
-    print("CHECKPOINT DEF START FINE")
+

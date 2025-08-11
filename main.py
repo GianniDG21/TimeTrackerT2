@@ -12,8 +12,9 @@ def menu():
     print("1. Nuova sessione") #BASE
     print("2. Storico sessioni") #Da implementare
     print("3. Analytics") #Da implementare
-    print("4. Aggiungi materia\n") #Da implementare
+    print("4. Aggiungi materia\n") 
     print("5. Impostazioni") #Da implementare
+    print("6. Esci\n")
     scelta = int(input("Inserisci il numero della tua scelta: "))
     match scelta:
         case 1:
@@ -29,6 +30,8 @@ def menu():
             subj.manage_subjects()
         case 5:
             print("Impostazioni\n") #da implementare
+        case 6:
+            quit()
 def quit():
     print("Grazie per aver usato TimeTrackerT")
     user.last_user = user.act_user
