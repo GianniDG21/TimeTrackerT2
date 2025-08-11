@@ -1,6 +1,7 @@
 #data.py
 #File di managing dati
 import json
+import datetime
 
 #=====USER FUNCTIONS=====
 def save_user(user_list):
@@ -27,20 +28,23 @@ def save_subjects(subjects_list):
         print(f"Errore nel salvataggio delle materie: {e}")
 
 def load_subjects(user):
-
+    """Load subjects from file"""
     try:
         with open('subjects.json', 'r') as f:
-            subjects = json.load(f)
-            return subjects.get(user, [])
+            return json.load(f)
     except FileNotFoundError:
-        return []
+        return {user: []}
+    except json.JSONDecodeError:
+        print("Error reading subjects from file.")
+        return {user: []}
     
 #=====SESSION FUNCTIONS=====
 def save_session(user, materia, durata):
     session = {
         'user': user,
         'materia': materia,
-        'durata': int(durata)
+        'durata': int(durata),
+        'timestamp': datetime.datetime.now().isoformat()
     }
     try:
         with open('sessions.json', 'a') as f:
