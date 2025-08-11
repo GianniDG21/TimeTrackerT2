@@ -3,7 +3,7 @@
 import time
 import user
 import dataM
-import main
+
 
 subjects_list = {user.act_user: []}
 
@@ -16,7 +16,7 @@ def add_subject():
         print(f"Materia '{subject}' aggiunta con successo.")
     else:
         print(f"La materia '{subject}' esiste già per l'utente {user.act_user}.")
-    main.menu()  # Torna al menu principale dopo l'aggiunta
+    
 
 def remove_subject():
     subject = input("Inserisci il nome della materia da rimuovere: ")
@@ -34,7 +34,6 @@ def list_subjects():
     if not subjects_list[user.act_user]:
         print("Nessuna materia disponibile per l'utente corrente.")
     time.sleep(2)  # Pausa per la visualizzazione
-    main.menu()  # Torna al menu principale dopo la visualizzazione
 
 def manage_subjects():  #Funzione da associare al menu
         print("\nGestione Materie:")
@@ -52,6 +51,6 @@ def manage_subjects():  #Funzione da associare al menu
             case '3':
                 list_subjects()
             case '4':
-                main.quit()
+                print("Uscita dalla gestione materie.")
             case _:
                 print("Opzione non valida, riprova.")
