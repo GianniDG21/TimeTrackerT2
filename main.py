@@ -12,7 +12,7 @@ def menu():
     print("1. Nuova sessione") #BASE
     print("2. Storico sessioni") #Da implementare
     print("3. Analytics") #Da implementare
-    print("4. Aggiungi materia\n") 
+    print("4. Aggiungi materia\n")
     print("5. Impostazioni") #Da implementare
     print("6. Esci\n")
     scelta = int(input("Inserisci il numero della tua scelta: "))

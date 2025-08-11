@@ -11,16 +11,26 @@ def start_session(materia, durata):
     print(f"Sessione in avvio.")
     print(f"Materia: {materia}")
     print(f"Durata: {durata} minuti")
-    timer_script.avvia_timer(materia, int(durata))
-    dataM.save_session(user.act_user, materia, int(durata))
-    print("Sessione completata!")
+        # Il timer ora restituisce la durata effettiva
+    durata_effettiva = timer_script.avvia_timer(materia, int(durata))
+    
+    # Salva la sessione con la durata effettiva
+    if dataM.save_session(user.act_user, materia, durata_effettiva):
+        print(f"Sessione salvata con successo! Durata effettiva: {durata_effettiva} minuti")
+    else:
+        print("Errore nel salvataggio della sessione.")
     print(f"Vuoi fare una pausa? (s/n)")
     risposta = input().strip().lower()
     if risposta == "s":
         risposta = input("Di quanto tempo?")
         durata_pausa = int(risposta)
-        timer_script.avvia_timer("PAUSA", durata_pausa)
-        dataM.save_session(user.act_user, "PAUSA", durata_pausa)
+        durata_effettiva = timer_script.avvia_timer(materia, int(durata_pausa))
+    
+    # Salva la sessione con la durata effettiva
+        if dataM.save_session(user.act_user, materia, durata_effettiva):
+            print(f"Sessione salvata con successo! Durata effettiva: {durata_effettiva} minuti")
+        else:
+            print("Errore nel salvataggio della sessione.")
     else:
         print("Nessuna pausa programmata.")
     time.sleep(2)  # Pausa per la visualizzazione

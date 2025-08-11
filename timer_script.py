@@ -1,48 +1,61 @@
 import time
 import os
 from termcolor import colored
+from datetime import datetime
+
+if os.name == 'nt':
+    import msvcrt
 
 def avvia_timer(materia, durata_minuti):
-
     secondi_totali = durata_minuti * 60
-
+    secondi_trascorsi = 0
+    timer_paused = False
     os.system('cls' if os.name == 'nt' else 'clear')
 
     try:
-        # Ottiene la larghezza del terminale per centrare il titolo
         larghezza_terminale = os.get_terminal_size().columns
-        # Stampa il titolo centrato e in grassetto
         print(colored(materia.center(larghezza_terminale), 'cyan', attrs=['bold']))
-        print("-" * larghezza_terminale) # Aggiunge una linea di separazione
+        print("-" * larghezza_terminale)
+        
+        # Comandi mostrati una sola volta all'inizio
+        comandi = "[p] Pausa/Riprendi | [q] Esci"
+        print(colored(comandi.center(larghezza_terminale), 'white'))
+        print("-" * larghezza_terminale)
 
+        start_time = time.time()
         while secondi_totali > 0:
-            # Calcola minuti e secondi rimanenti
             minuti, secondi = divmod(secondi_totali, 60)
-            
-            # Formatta il tempo rimanente
             tempo_formattato = f"{minuti:02d}:{secondi:02d}"
-
-            # Logica per il cambio di colore
-            percentuale_rimanente = secondi_totali / (durata_minuti * 60)
-            colore = 'white' # Colore di base
-            if percentuale_rimanente < 0.5:
-                colore = 'yellow' # Giallo quando si è a metà
-            if percentuale_rimanente < 0.2:
-                colore = 'green' # Verde quando sta per scadere
-
-            # Stampa il timer colorato e centrato
-            print(colored(tempo_formattato.center(larghezza_terminale), colore), end='\r')
             
-            # Attende un secondo
-            time.sleep(1)
+            # Mostra timer e stato, senza ripetere i comandi
+            stato = "IN PAUSA" if timer_paused else "IN CORSO"
+            display = f"{tempo_formattato} [{stato}]"
+            print(colored(display.center(larghezza_terminale), 'white'), end='\r')
             
-            # Decrementa il tempo
-            secondi_totali -= 1
+            # Gestione input
+            if os.name == 'nt':  # Windows
+                if msvcrt.kbhit():
+                    key = msvcrt.getch().decode('utf-8').lower()
+                    if key == 'p':
+                        timer_paused = not timer_paused
+                        stato_msg = "Timer in pausa" if timer_paused else "Timer ripreso"
+                        print(colored(f"\n{stato_msg}".center(larghezza_terminale), 'yellow'))
+                    elif key == 'q':
+                        raise KeyboardInterrupt
+
+            # Aggiornamento timer solo se non in pausa
+            if not timer_paused:
+                time.sleep(1)
+                secondi_totali -= 1
+                secondi_trascorsi += 1
+            else:
+                time.sleep(0.1)
 
     except KeyboardInterrupt:
-        print("\nTimer interrotto dall'utente.")
-        return # Esce dalla funzione se l'utente preme Ctrl+C
+        tempo_effettivo = int(secondi_trascorsi / 60)
+        print(colored(f"\nSessione interrotta. Durata effettiva: {tempo_effettivo} minuti".center(larghezza_terminale), 'red'))
+        return tempo_effettivo
 
-    # Messaggio di fine timer
+    tempo_effettivo = durata_minuti
     print(colored("\nIl tempo è scaduto! Ottimo lavoro!".center(larghezza_terminale), 'green', attrs=['bold']))
-
+    return tempo_effettivo
