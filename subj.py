@@ -34,6 +34,16 @@ def add_subject():
 
 
 def remove_subject():
+    global subjects_list
+    subjects_list = get_subjects()  # Refresh the list
+    print("\nMaterie disponibili:")
+    if user.act_user in subjects_list:
+        for subject in subjects_list[user.act_user]:
+            print(f"- {subject}")
+    if not subjects_list.get(user.act_user, []):
+        print("Nessuna materia disponibile per l'utente corrente.")
+    print(f"Utente attuale: {user.act_user}")
+    time.sleep(2)
     subject = input("Inserisci il nome della materia da rimuovere: ")
     if subject in subjects_list[user.act_user]:
         subjects_list[user.act_user].remove(subject)

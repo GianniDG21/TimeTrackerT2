@@ -2,9 +2,14 @@ import time
 import os
 from termcolor import colored
 from datetime import datetime
+import win32gui
+import win32con
 
-if os.name == 'nt':
-    import msvcrt
+def bring_to_front():
+    """Porta la finestra del terminale in primo piano"""
+    hwnd = win32gui.GetForegroundWindow()
+    win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+    win32gui.SetForegroundWindow(hwnd)
 
 def avvia_timer(materia, durata_minuti):
     secondi_totali = durata_minuti * 60
@@ -57,5 +62,6 @@ def avvia_timer(materia, durata_minuti):
         return tempo_effettivo
 
     tempo_effettivo = durata_minuti
+    bring_to_front()  # Porta in primo piano quando il timer finisce
     print(colored("\nIl tempo è scaduto! Ottimo lavoro!".center(larghezza_terminale), 'green', attrs=['bold']))
     return tempo_effettivo
