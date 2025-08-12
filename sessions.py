@@ -63,3 +63,13 @@ def start():
         print("Prova ad aggiungere la materia dal menu principale.")
         time.sleep(2)
 
+def history():
+    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    print(f"Storico sessioni per l'utente: {user.act_user}")
+    sessions = dataM.load_sessions(user.act_user)
+    if sessions:
+        for session in sessions:
+            print(f"ID: {session['id']}, Materia: {session['materia']}, Durata: {session['durata']} minuti, Timestamp: {session['timestamp']}")
+    else:
+        print("Nessuna sessione trovata.")
+    return

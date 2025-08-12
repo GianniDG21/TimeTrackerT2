@@ -70,3 +70,15 @@ def save_session(user, materia, durata):
     except Exception as e:
         print(f"Errore nel salvataggio della sessione: {e}")
         return False
+
+def load_sessions(user):
+    """Load sessions for a specific user"""
+    try:
+        with open('sessions.json', 'r') as f:
+            sessions = [json.loads(line) for line in f if line.strip()]
+            return [session for session in sessions if session.get('user') == user]
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        print("Error reading sessions from file.")
+        return []
