@@ -4,6 +4,7 @@ from termcolor import colored
 from datetime import datetime
 import win32gui
 import win32con
+import msvcrt
 
 def bring_to_front():
     """Porta la finestra del terminale in primo piano"""
