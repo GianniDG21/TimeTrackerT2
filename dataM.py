@@ -39,16 +39,34 @@ def load_subjects(user):
         return {user: []}
     
 #=====SESSION FUNCTIONS=====
+def _get_next_session_id():
+    """Generate next available session ID"""
+    try:
+        with open('sessions.json', 'r') as f:
+            sessions = [json.loads(line) for line in f if line.strip()]
+            if sessions:
+                max_id = max(session.get('id', 0) for session in sessions)
+                return max_id + 1
+            return 1
+    except FileNotFoundError:
+        return 1
+    except json.JSONDecodeError:
+        print("Warning: Corrupted sessions file. Starting from ID 1")
+        return 1
+
 def save_session(user, materia, durata):
     session = {
+        'id': _get_next_session_id(),
         'user': user,
         'materia': materia,
-        'durata': int(durata),
-        'timestamp': datetime.datetime.now().isoformat()
+        'durata': durata,
+        'timestamp': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     try:
         with open('sessions.json', 'a') as f:
             json.dump(session, f)
-            f.write('\n')  # Aggiungi una nuova riga per ogni sessione
+            f.write('\n')  # Add newline for each session
+        return True
     except Exception as e:
         print(f"Errore nel salvataggio della sessione: {e}")
+        return False
