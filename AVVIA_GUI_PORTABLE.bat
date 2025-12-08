@@ -1,9 +1,9 @@
 @echo off
-title TimeTrackerT2 - Portable Edition
+title TimeTrackerT2 v2.0 - Portable Edition
 cls
 echo.
-echo 🚀 TimeTrackerT2 - Avvio Portable
-echo ================================
+echo 🚀 TimeTrackerT2 v2.0 - Avvio Portable
+echo =====================================
 cd /d "%~dp0"
 
 REM Trova Python
@@ -21,7 +21,7 @@ if "%PYTHON_EXE%"=="" (
 )
 
 echo ✅ Python: %PYTHON_EXE%
-echo 🎯 Avviando TimeTrackerT2...
+echo 🎯 Avviando TimeTrackerT2 v2.0...
 echo.
 
 "%PYTHON_EXE%" main_gui.py
@@ -29,6 +29,6 @@ echo.
 if errorlevel 1 (
     echo.
     echo ❌ Errore nell'avvio dell'applicazione
-    echo 🔧 Esegui setup_portable.py per riparare l'ambiente
+    echo 🔧 Esegui: python scripts\setup_portable.py
     pause
 )

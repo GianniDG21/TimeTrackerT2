@@ -18,7 +18,7 @@ pause
 echo.
 
 echo Avvio processo di build...
-python auto_build.py
+python scripts\auto_build.py
 
 echo.
 echo ==========================================

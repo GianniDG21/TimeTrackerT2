@@ -1,16 +1,17 @@
 @echo off
 cd /d "%~dp0"
 echo ========================================
-echo    TimeTrackerT - GUI Elegante v1.1.0 
+echo    TimeTrackerT2 - GUI Elegante v2.0 
 echo ========================================
 echo.
 echo 🚀 Sto avviando l'interfaccia moderna...
 echo 🎨 Design con gradienti eleganti
 echo 🚧 Analytics pronto per essere sviluppato!
+echo 📦 Usa release/TimeTrackerT2_v2.0.exe per distribuzione
 echo.
-C:/Users/Gianni/AppData/Local/Microsoft/WindowsApps/python3.11.exe main_gui.py
+python main_gui.py
 echo.
 echo ✅ Applicazione chiusa.
-echo 💫 Grazie per aver usato TimeTrackerT!
+echo 💫 Grazie per aver usato TimeTrackerT2!
 echo.
 pause
