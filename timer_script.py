@@ -5,12 +5,23 @@ from datetime import datetime
 import win32gui
 import win32con
 import msvcrt
+import ctypes
 
 def bring_to_front():
-    """Porta la finestra del terminale in primo piano"""
+    """Porta la finestra del terminale in primo piano con metodo più affidabile"""
+    # Trova la finestra del terminale
     hwnd = win32gui.GetForegroundWindow()
+    
+    # Forza l'attivazione della finestra
+    user32 = ctypes.WinDLL('user32')
+    user32.AllowSetForegroundWindow(-1)  # ASFW_ANY
+    
+    # Ripristina e attiva la finestra
     win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
     win32gui.SetForegroundWindow(hwnd)
+    
+    # Flash della finestra per attirare l'attenzione
+    win32gui.FlashWindow(hwnd, True)
 
 def avvia_timer(materia, durata_minuti):
     secondi_totali = durata_minuti * 60
@@ -64,5 +75,6 @@ def avvia_timer(materia, durata_minuti):
 
     tempo_effettivo = durata_minuti
     bring_to_front()  # Porta in primo piano quando il timer finisce
+    os.system('\a')  # Aggiunge un beep sonoro
     print(colored("\nIl tempo è scaduto! Ottimo lavoro!".center(larghezza_terminale), 'green', attrs=['bold']))
     return tempo_effettivo
