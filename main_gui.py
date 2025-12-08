@@ -1,6 +1,7 @@
 """
-TimeTrackerT2 GUI - Versione CustomTkinter
+TimeTrackerT2 GUI v2.0 - Versione CustomTkinter (Exe Ready)
 Applicazione moderna per il tracking del tempo di studio
+Ottimizzata per compilazione PyInstaller/auto-py-to-exe
 """
 
 import customtkinter as ctk
@@ -12,14 +13,28 @@ import pygame
 from datetime import datetime, timedelta
 import os
 import sys
+from pathlib import Path
 
-# Import dei moduli esistenti
-import user
-import dataM
-import subj
+# Setup per modalità exe e portable
+if getattr(sys, 'frozen', False):
+    # Eseguibile PyInstaller
+    APP_DIR = Path(sys.executable).parent
+else:
+    # Codice Python normale
+    APP_DIR = Path(__file__).parent
 
-# Import delle finestre GUI
-from gui_windows import NewSessionWindow, SessionHistoryWindow, SubjectManagementWindow, TimerWindow
+os.chdir(APP_DIR)  # Assicura che la working directory sia corretta
+sys.path.insert(0, str(APP_DIR))  # Aggiungi directory app al path
+
+# Import dei moduli esistenti con gestione errori
+try:
+    import user
+    import dataM
+    import subj
+    from gui_windows import NewSessionWindow, SessionHistoryWindow, SubjectManagementWindow, TimerWindow
+except ImportError as e:
+    messagebox.showerror("Errore Moduli", f"Errore importando moduli: {e}\n\nEsegui setup_portable.py per riparare l'ambiente.")
+    sys.exit(1)
 
 # Configurazione CustomTkinter - Design Moderno
 ctk.set_appearance_mode("dark")  # Modalità dark elegante
@@ -27,8 +42,11 @@ ctk.set_default_color_theme("blue")  # Tema blu con gradienti
 
 class TimeTrackerApp:
     def __init__(self):
+        self.app_dir = APP_DIR
+        self.setup_portable_environment()
+        
         self.window = ctk.CTk()
-        self.window.title(f"TimeTrackerT - v1.1.0 GUI")
+        self.window.title(f"TimeTrackerT - v1.1.0 GUI (Portable)")
         self.window.geometry("800x600")
         self.window.resizable(True, True)
         
@@ -50,6 +68,30 @@ class TimeTrackerApp:
         
         # Centro la finestra
         self.center_window()
+    
+    def setup_portable_environment(self):
+        """Configura l'ambiente per modalità portable"""
+        # Assicura che i file di dati esistano
+        data_files = {
+            'sessions.json': '[]',
+            'subjects.json': '{"Gianni": []}',
+            'users.txt': 'Gianni\n'
+        }
+        
+        for filename, default_content in data_files.items():
+            file_path = self.app_dir / filename
+            if not file_path.exists():
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(default_content)
+        
+        # Configura pygame per modalità portable
+        try:
+            pygame.mixer.init()
+        except Exception as e:
+            print(f"Pygame mixer non disponibile in modalità portable: {e}")
+        
+        # Log del setup portable
+        print(f"📱 Modalità Portable attiva - Directory: {self.app_dir}")
 
     def center_window(self):
         """Centra la finestra sullo schermo"""
@@ -84,12 +126,24 @@ class TimeTrackerApp:
         )
         self.title_label.pack(side="left", padx=20, pady=15)
         
+        # Info utente e modalità portable
+        info_frame = ctk.CTkFrame(self.header_frame, fg_color="transparent")
+        info_frame.pack(side="right", padx=20, pady=15)
+        
         self.user_label = ctk.CTkLabel(
-            self.header_frame, 
-            text=f"Utente: {user.act_user}", 
-            font=ctk.CTkFont(size=16)
+            info_frame, 
+            text=f"👤 {user.act_user}", 
+            font=ctk.CTkFont(size=16, weight="bold")
         )
-        self.user_label.pack(side="right", padx=20, pady=15)
+        self.user_label.pack()
+        
+        portable_label = ctk.CTkLabel(
+            info_frame, 
+            text="💻 Portable Mode", 
+            font=ctk.CTkFont(size=12),
+            text_color=("#4ade80", "#22c55e")
+        )
+        portable_label.pack()
         
         # Frame per i pulsanti del menu principale - Design elegante
         self.menu_frame = ctk.CTkFrame(
@@ -117,10 +171,10 @@ class TimeTrackerApp:
         
         self.status_label = ctk.CTkLabel(
             self.status_frame, 
-            text="Pronto per iniziare una nuova sessione", 
+            text=f"📁 Portable Ready | 📱 Directory: {self.app_dir.name}", 
             font=ctk.CTkFont(size=12)
         )
-        self.status_label.pack(pady=5)
+        self.status_label.pack(pady=8)
 
     def create_menu_buttons(self):
         """Crea i pulsanti del menu principale"""

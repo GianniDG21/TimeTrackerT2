@@ -1,0 +1,77 @@
+{
+    "version": "auto-py-to-exe-configuration",
+    "pyinstallerOptions": [
+        {
+            "optionDest": "noconfirm",
+            "value": true
+        },
+        {
+            "optionDest": "filenames",
+            "value": "main_gui.py"
+        },
+        {
+            "optionDest": "onefile",
+            "value": true
+        },
+        {
+            "optionDest": "console",
+            "value": false
+        },
+        {
+            "optionDest": "ascii",
+            "value": false
+        },
+        {
+            "optionDest": "clean_build",
+            "value": true
+        },
+        {
+            "optionDest": "strip",
+            "value": false
+        },
+        {
+            "optionDest": "noupx",
+            "value": true
+        },
+        {
+            "optionDest": "uac_admin",
+            "value": false
+        },
+        {
+            "optionDest": "uac_uiaccess",
+            "value": false
+        },
+        {
+            "optionDest": "win_private_assemblies",
+            "value": false
+        },
+        {
+            "optionDest": "win_no_prefer_redirects",
+            "value": false
+        },
+        {
+            "optionDest": "name",
+            "value": "TimeTrackerT2"
+        },
+        {
+            "optionDest": "add_data",
+            "value": "sounds;sounds"
+        },
+        {
+            "optionDest": "hidden_import",
+            "value": [
+                "customtkinter",
+                "pygame",
+                "tkinter",
+                "threading",
+                "json",
+                "datetime",
+                "pathlib"
+            ]
+        }
+    ],
+    "nonPyinstallerOptions": {
+        "increaseRecursionLimit": true,
+        "manualArguments": ""
+    }
+}

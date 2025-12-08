@@ -35,24 +35,30 @@ TimeTrackerT è stato completamente rinnovato con un'interfaccia grafica **elega
 
 ### 🚀 Come Avviare
 
-#### Metodo 1: Launcher Grafico (Consigliato)
+#### Metodo 1: Launcher GUI Standard
 ```
 Doppio clic su: AVVIA_GUI.bat
 ```
 
-#### Metodo 2: Direttamente da Python
+#### Metodo 2: 💻 Launcher Portable (NUOVO!)
+```
+Doppio clic su: AVVIA_GUI_PORTABLE.bat
+```
+
+#### Metodo 3: Direttamente da Python
 ```bash
 python main_gui.py
 ```
 
-#### Metodo 3: CLI Classica (Ancora Disponibile)
+#### Metodo 4: CLI Classica (Ancora Disponibile)
 ```
 Doppio clic su: APRIMI.bat
 ```
 
-#### Metodo 4: Test Funzionalità
+#### Metodo 5: Test e Diagnostica
 ```bash
-python test_gui.py
+python test_gui.py           # Test funzionalità
+python verifica_portable.py  # Verifica setup portable
 ```
 
 ### 🛠️ Dipendenze Installate
@@ -63,26 +69,55 @@ L'applicazione utilizza le seguenti librerie moderne:
 - **Pillow** - Gestione immagini avanzata  
 - **Pygame** - Gestione audio per notifiche
 - **Tkinter** - Framework GUI base (già incluso in Python)
+- **PyWin32** - Integrazione Windows (per versione portable)
+
+### 💻 **NOVITÀ: Modalità Portable!**
+
+TimeTrackerT2 è ora **completamente portable**:
+
+#### ✨ **Caratteristiche Portable:**
+- 📱 **Porta ovunque**: USB, cloud, qualsiasi PC
+- 🔧 **Setup automatico**: `python setup_portable.py`
+- 📊 **Dati inclusi**: Tutte le tue sessioni viaggiano con l'app
+- 🐍 **Python flessibile**: Usa Python portable O di sistema
+- ✅ **Zero dipendenze** dal PC host
+
+#### 🚀 **Avvio Portable:**
+```bash
+# Setup iniziale (una volta sola)
+python setup_portable.py
+
+# Avvio quotidiano
+AVVIA_GUI_PORTABLE.bat
+```
+
+#### 📖 **Documentazione Portable:**
+- `GUIDA_PORTABLE.md` - Guida completa uso portable
+- `verifica_portable.py` - Diagnostica e verifica ambiente
 
 ### 📁 Struttura File
 
 ```
 TimeTrackerT2/
-├── main_gui.py          # 🆕 Applicazione GUI principale
-├── gui_windows.py       # 🆕 Finestre secondarie GUI
-├── gui_analytics.py     # 🆕 Finestra analytics e grafici
-├── gui_utils.py         # 🆕 Utilità e helper GUI
-├── test_gui.py          # 🆕 Test funzionalità GUI
-├── AVVIA_GUI.bat       # 🆕 Launcher GUI
-├── main.py             # 📟 Versione CLI (ancora disponibile)
-├── timer_script.py     # ⏱️ Timer CLI originale
-├── dataM.py            # 💾 Gestione dati
-├── user.py             # 👤 Gestione utenti
-├── sessions.py         # 📊 Gestione sessioni CLI
-├── subj.py             # 📚 Gestione materie CLI
-├── subjects.json       # 📄 Database materie
-├── sessions.json       # 📄 Database sessioni
-└── users.txt          # 📄 Database utenti
+├── main_gui.py              # 🆕 Applicazione GUI principale (Portable Ready!)
+├── gui_windows.py           # 🆕 Finestre secondarie GUI
+├── gui_utils.py             # 🆕 Utilità e helper GUI
+├── test_gui.py              # 🆕 Test funzionalità GUI
+├── 💻 PORTABLE SYSTEM:
+│   ├── setup_portable.py    # 🔧 Setup automatico portable
+│   ├── verifica_portable.py # 📊 Verifica sistema portable
+│   ├── AVVIA_GUI_PORTABLE.bat # 🚀 Launcher portable
+│   └── GUIDA_PORTABLE.md    # 📖 Guida uso portable
+├── AVVIA_GUI.bat           # 🆕 Launcher GUI standard
+├── main.py                 # 📟 Versione CLI (ancora disponibile)
+├── timer_script.py         # ⏱️ Timer CLI originale
+├── dataM.py                # 💾 Gestione dati
+├── user.py                 # 👤 Gestione utenti
+├── sessions.py             # 📊 Gestione sessioni CLI
+├── subj.py                 # 📚 Gestione materie CLI
+├── subjects.json           # 📄 Database materie
+├── sessions.json           # 📄 Database sessioni
+└── users.txt              # 📄 Database utenti
 ```
 
 ### 🆚 Differenze GUI vs CLI
