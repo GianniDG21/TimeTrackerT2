@@ -72,15 +72,21 @@ class AeroStyleMixin:
         """Crea card Aero standardizzata"""
         colors = AeroStyleMixin.get_aero_colors()
         
-        card_frame = ctk.CTkFrame(
-            parent,
-            corner_radius=16,
-            fg_color=colors['card_bg'],
-            border_width=2,
-            border_color=colors[color_key],
-            width=width
-        )
-        if width:
+        # Parametri della card
+        card_params = {
+            'corner_radius': 16,
+            'fg_color': colors['card_bg'],
+            'border_width': 2,
+            'border_color': colors[color_key]
+        }
+        
+        # Aggiungi width solo se specificato
+        if width is not None:
+            card_params['width'] = width
+        
+        card_frame = ctk.CTkFrame(parent, **card_params)
+        
+        if width is not None:
             card_frame.pack_propagate(False)
         
         # Header della card
@@ -2940,112 +2946,222 @@ Attività (7 giorni): {len(recent_activity)}
             messagebox.showerror("Errore", f"Errore eliminazione!\\n\\nDettagli: {e}")
 
 
-class MilestoneDialog:
-    """Finestra di dialogo per aggiungere milestone manuali"""
+class MilestoneDialog(AeroStyleMixin):
+    """Finestra di dialogo per aggiungere milestone manuali - Design Aero"""
     
     def __init__(self, parent, user, subjects_list):
         self.user = user
         self.subjects_list = subjects_list if subjects_list else ["Nessuna materia disponibile"]
         self.milestone_added = False
+        self.colors = self.get_aero_colors()
         
-        # Crea finestra dialogo
+        # Crea finestra dialogo con design Aero
         self.dialog = ctk.CTkToplevel(parent)
-        self.dialog.title("Aggiungi Milestone")
-        self.dialog.geometry("500x400")
-        self.dialog.resizable(False, False)
+        self.dialog.title("🏆 Aggiungi Milestone")
+        self.dialog.geometry("650x700")
+        self.dialog.resizable(True, True)
+        self.dialog.minsize(600, 650)
         
-        # Centra la finestra
+        # Configura griglia
+        self.dialog.grid_rowconfigure(0, weight=1)
+        self.dialog.grid_columnconfigure(0, weight=1)
+        
+        # Centra e rende modale
         self.dialog.transient(parent)
         self.dialog.grab_set()
         
         self.setup_ui()
+        self.center_window()
+    
+    def center_window(self):
+        """Centra la finestra"""
+        self.dialog.update_idletasks()
+        width = self.dialog.winfo_width()
+        height = self.dialog.winfo_height()
+        pos_x = (self.dialog.winfo_screenwidth() // 2) - (width // 2)
+        pos_y = (self.dialog.winfo_screenheight() // 2) - (height // 2)
+        self.dialog.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
         
     def setup_ui(self):
-        """Crea l'interfaccia del dialogo milestone"""
+        """Crea l'interfaccia del dialogo milestone con design Aero"""
         
-        # Frame principale
-        main_frame = ctk.CTkFrame(self.dialog)
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
-        
-        # Titolo
-        title_label = ctk.CTkLabel(
-            main_frame,
-            text="Aggiungi Milestone",
-            font=ctk.CTkFont(size=20, weight="bold")
+        # Frame principale con gradient Aero
+        main_frame = ctk.CTkFrame(
+            self.dialog,
+            corner_radius=20,
+            fg_color=self.colors['glass_bg'],
+            border_width=2,
+            border_color=self.colors['border_light']
         )
-        title_label.pack(pady=(20, 10))
+        main_frame.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
+        main_frame.grid_rowconfigure(1, weight=1)  # Solo il contenuto scrollabile si espande
+        main_frame.grid_columnconfigure(0, weight=1)
         
-        help_label = ctk.CTkLabel(
-            main_frame,
-            text="Le milestone segnano traguardi importanti nel tuo apprendimento",
-            font=ctk.CTkFont(size=12),
-            text_color="gray"
+        # Header con effetto glass
+        header_frame = self.create_aero_header(
+            main_frame, 
+            "Aggiungi Milestone", 
+            "🏆", 
+            "warning_orange"
         )
-        help_label.pack(pady=(0, 20))
+        header_frame.grid(row=0, column=0, sticky="ew", padx=0, pady=0)
         
-        # Materia
-        materia_label = ctk.CTkLabel(main_frame, text="Materia:", font=ctk.CTkFont(size=14, weight="bold"))
-        materia_label.pack(pady=(0, 5))
+        # Scrollable frame per contenuto (senza i pulsanti)
+        scroll_frame = ctk.CTkScrollableFrame(
+            main_frame,
+            corner_radius=16,
+            fg_color=self.colors['card_bg'],
+            scrollbar_fg_color=self.colors['border_light']
+        )
+        scroll_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=(10, 0))
+        scroll_frame.grid_columnconfigure(0, weight=1)
+        
+        # Footer fisso per i pulsanti
+        footer_frame = ctk.CTkFrame(
+            main_frame,
+            corner_radius=16,
+            height=90,
+            fg_color=self.colors['glass_bg'],
+            border_width=1,
+            border_color=self.colors['border_light']
+        )
+        footer_frame.grid(row=2, column=0, sticky="ew", padx=20, pady=(10, 20))
+        footer_frame.grid_propagate(False)
+        footer_frame.grid_columnconfigure(0, weight=1)
+        
+        # === INFO CARD ===
+        info_card, info_content = self.create_aero_card(
+            scroll_frame, 
+            "Informazioni Milestone", 
+            "💡", 
+            "cyan_academic"
+        )
+        info_card.pack(fill="x", pady=15, padx=10)
+        
+        help_text = ctk.CTkLabel(
+            info_content,
+            text="🎯 Le milestone segnano traguardi importanti nel tuo percorso di apprendimento.\n\n"
+                 "📊 Vengono visualizzate nella timeline del Registro Argomenti.\n"
+                 "🏆 Aiutano a tracciare i progressi e celebrare i successi.",
+            font=ctk.CTkFont(size=14),
+            text_color=self.colors['text_secondary'],
+            justify="left"
+        )
+        help_text.pack(fill="x", pady=10)
+        
+        # === MATERIA CARD ===
+        materia_card, materia_content = self.create_aero_card(
+            scroll_frame, 
+            "Materia di Studio", 
+            "📚", 
+            "primary_blue"
+        )
+        materia_card.pack(fill="x", pady=15, padx=10)
         
         self.materia_combo = ctk.CTkComboBox(
-            main_frame,
+            materia_content,
             values=self.subjects_list,
-            width=400,
-            height=35,
-            state="readonly"
+            font=ctk.CTkFont(size=16),
+            width=450,
+            height=45,
+            corner_radius=12,
+            border_width=2,
+            border_color=self.colors['border_light']
         )
-        self.materia_combo.pack(pady=(0, 15))
+        self.materia_combo.pack(pady=10)
         
-        # Argomento
-        argomento_label = ctk.CTkLabel(main_frame, text="Argomento/Traguardo:", font=ctk.CTkFont(size=14, weight="bold"))
-        argomento_label.pack(pady=(0, 5))
+        if self.subjects_list and self.subjects_list[0] != "Nessuna materia disponibile":
+            self.materia_combo.set(self.subjects_list[0])
+        
+        # === ARGOMENTO CARD ===
+        argomento_card, argomento_content = self.create_aero_card(
+            scroll_frame, 
+            "Traguardo Raggiunto", 
+            "🎯", 
+            "success_green"
+        )
+        argomento_card.pack(fill="x", pady=15, padx=10)
+        
+        # Helper text
+        helper_argomento = ctk.CTkLabel(
+            argomento_content,
+            text="💭 Descrivi il traguardo che hai raggiunto:",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            text_color=self.colors['text_secondary']
+        )
+        helper_argomento.pack(pady=(5, 10))
         
         self.argomento_entry = ctk.CTkEntry(
-            main_frame,
-            placeholder_text="es. Completato Capitolo 3 - Database Relazionali",
-            font=ctk.CTkFont(size=14),
-            width=400,
-            height=35
+            argomento_content,
+            placeholder_text="es. Completato Capitolo 5 - Reti Neurali, Superato Esame Intermedio, etc.",
+            font=ctk.CTkFont(size=16),
+            width=500,
+            height=45,
+            corner_radius=12,
+            border_width=2
         )
-        self.argomento_entry.pack(pady=(0, 15))
+        self.argomento_entry.pack(pady=(0, 10))
         
-        # Descrizione opzionale
-        desc_label = ctk.CTkLabel(main_frame, text="Descrizione (opzionale):", font=ctk.CTkFont(size=14, weight="bold"))
-        desc_label.pack(pady=(0, 5))
+        # === DESCRIZIONE CARD ===
+        desc_card, desc_content = self.create_aero_card(
+            scroll_frame, 
+            "Dettagli (Opzionale)", 
+            "📝", 
+            "purple_creative"
+        )
+        desc_card.pack(fill="x", pady=15, padx=10)
+        
+        # Helper text
+        helper_desc = ctk.CTkLabel(
+            desc_content,
+            text="✍️ Aggiungi dettagli, riflessioni o note sul traguardo:",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            text_color=self.colors['text_secondary']
+        )
+        helper_desc.pack(pady=(5, 10))
         
         self.desc_textbox = ctk.CTkTextbox(
-            main_frame,
-            width=400,
-            height=80,
-            font=ctk.CTkFont(size=12)
+            desc_content,
+            width=500,
+            height=100,
+            font=ctk.CTkFont(size=14),
+            corner_radius=12,
+            border_width=2
         )
-        self.desc_textbox.pack(pady=(0, 20))
+        self.desc_textbox.pack(pady=(0, 10))
         
-        # Frame pulsanti
-        button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        button_frame.pack(pady=(10, 20))
+        # === PULSANTI NEL FOOTER FISSO ===
+        # Pulsanti sempre visibili nel footer
+        buttons_container = ctk.CTkFrame(footer_frame, fg_color="transparent")
+        buttons_container.pack(expand=True)
         
-        # Pulsante Salva
+        # Pulsante Salva - Principale
         save_btn = ctk.CTkButton(
-            button_frame,
-            text="Salva Milestone",
-            command=self.save_milestone,
-            height=35,
-            width=140,
-            fg_color=("#2d5aa0", "#3b82f6"),
-            hover_color=("#1e40af", "#60a5fa")
+            buttons_container,
+            text="🏆 Salva Milestone",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            width=200,
+            height=50,
+            corner_radius=25,
+            fg_color=self.colors['success_green'],
+            hover_color=("#047857", "#059669"),
+            border_width=3,
+            border_color=("#10b981", "#34d399"),
+            command=self.save_milestone
         )
-        save_btn.pack(side="left", padx=(0, 10))
+        save_btn.pack(side="left", padx=(0, 15))
         
         # Pulsante Annulla
         cancel_btn = ctk.CTkButton(
-            button_frame,
-            text="Annulla",
-            command=self.dialog.destroy,
-            height=35,
-            width=140,
-            fg_color=("#6b7280", "#9ca3af"),
-            hover_color=("#9ca3af", "#d1d5db")
+            buttons_container,
+            text="❌ Annulla",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            width=120,
+            height=50,
+            corner_radius=25,
+            fg_color=self.colors['gray_neutral'],
+            hover_color=("#4b5563", "#6b7280"),
+            command=self.dialog.destroy
         )
         cancel_btn.pack(side="left")
     
