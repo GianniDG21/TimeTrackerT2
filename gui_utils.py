@@ -7,7 +7,7 @@ import json
 from datetime import datetime, timedelta
 from collections import defaultdict, Counter
 import dataM
-import user
+# import user # Rimosso - ora gestito da user_manager
 
 class StatsCalculator:
     """Classe per calcolare statistiche avanzate delle sessioni"""
