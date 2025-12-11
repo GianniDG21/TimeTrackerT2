@@ -1635,3 +1635,448 @@ Tempo Totale: {self.analytics.get_total_study_time(self.period_var.get()):.1f}h
         self.update_stats()
         # Ricarica il grafico corrente se presente
         # (Implementazione opzionale per auto-refresh)
+
+
+class GoalsWindow:
+    """Finestra per la gestione degli obiettivi di studio"""
+    
+    def __init__(self, main_app):
+        self.main_app = main_app
+        self.current_user = main_app.current_user
+        
+        # Inizializza il gestore obiettivi
+        try:
+            from goals_manager import GoalsManager
+            self.goals_manager = GoalsManager()
+            
+            self.setup_window()
+            self.create_widgets()
+            self.load_goals()
+            self.check_new_completions()  # Controlla obiettivi appena completati
+            
+            # Assicurati che la finestra sia visibile
+            self.window.lift()
+            self.window.focus_force()
+            
+        except Exception as e:
+            print(f"ERRORE GOALS: {e}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Errore", f"Errore inizializzazione obiettivi: {e}")
+            # Crea finestra di errore invece di uscire
+            self.create_error_window(e)
+    
+    def create_error_window(self, error):
+        """Crea una finestra di errore quando gli obiettivi non possono essere caricati"""
+        self.window = ctk.CTkToplevel(self.main_app)
+        self.window.title("Errore Obiettivi")
+        self.window.geometry("500x300")
+        
+        error_label = ctk.CTkLabel(
+            self.window,
+            text=f"Impossibile caricare gli Obiettivi:\\n{str(error)}",
+            font=ctk.CTkFont(size=14),
+            wraplength=450
+        )
+        error_label.pack(expand=True, padx=20, pady=20)
+        
+        close_btn = ctk.CTkButton(
+            self.window,
+            text="Chiudi",
+            command=self.window.destroy
+        )
+        close_btn.pack(pady=10)
+    
+    def setup_window(self):
+        """Configura la finestra principale"""
+        self.window = ctk.CTkToplevel(self.main_app)
+        self.window.title("Obiettivi - TimeTrackerT2")
+        self.window.geometry("900x650")
+        self.window.resizable(True, True)
+        self.window.minsize(800, 600)
+        
+        # Configura il grid
+        self.window.grid_rowconfigure(1, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
+        
+        # Rende la finestra modale
+        self.window.transient(self.main_app)
+        self.window.grab_set()
+    
+    def create_widgets(self):
+        """Crea i widget dell'interfaccia"""
+        
+        # Frame del titolo
+        title_frame = ctk.CTkFrame(self.window)
+        title_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+        
+        title_label = ctk.CTkLabel(
+            title_frame,
+            text=f"Obiettivi di Studio - {self.current_user}",
+            font=ctk.CTkFont(size=24, weight="bold")
+        )
+        title_label.pack(pady=15)
+        
+        # Frame principale contenuto
+        main_frame = ctk.CTkFrame(self.window)
+        main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
+        main_frame.grid_rowconfigure(0, weight=1)
+        main_frame.grid_columnconfigure(1, weight=1)
+        
+        # Sidebar sinistra per nuovo obiettivo
+        self.create_new_goal_sidebar(main_frame)
+        
+        # Area principale per lista obiettivi
+        self.create_goals_list_area(main_frame)
+    
+    def create_new_goal_sidebar(self, parent):
+        """Crea la sidebar per creare un nuovo obiettivo"""
+        sidebar_frame = ctk.CTkScrollableFrame(parent, width=300, label_text="Nuovo Obiettivo")
+        sidebar_frame.grid(row=0, column=0, sticky="ns", padx=(0, 10), pady=10)
+        
+        # Form per nuovo obiettivo
+        # Materia
+        materia_label = ctk.CTkLabel(sidebar_frame, text="Materia:", font=ctk.CTkFont(size=14, weight="bold"))
+        materia_label.pack(pady=(20, 5))
+        
+        # Carica materie disponibili
+        self.load_subjects()
+        self.materia_combo = ctk.CTkComboBox(
+            sidebar_frame,
+            values=self.subjects_list,
+            width=260,
+            height=35,
+            state="readonly"
+        )
+        self.materia_combo.pack(pady=(0, 15))
+        
+        # Tempo obiettivo
+        tempo_label = ctk.CTkLabel(sidebar_frame, text="Tempo Obiettivo:", font=ctk.CTkFont(size=14, weight="bold"))
+        tempo_label.pack(pady=(0, 5))
+        
+        # Frame per ore e minuti
+        time_frame = ctk.CTkFrame(sidebar_frame, fg_color="transparent")
+        time_frame.pack(pady=(0, 15), fill="x")
+        
+        # Ore
+        ore_label = ctk.CTkLabel(time_frame, text="Ore:")
+        ore_label.pack(pady=2)
+        self.ore_entry = ctk.CTkEntry(time_frame, width=120, placeholder_text="0")
+        self.ore_entry.pack(pady=2)
+        
+        # Minuti
+        minuti_label = ctk.CTkLabel(time_frame, text="Minuti:")
+        minuti_label.pack(pady=2)
+        self.minuti_entry = ctk.CTkEntry(time_frame, width=120, placeholder_text="0")
+        self.minuti_entry.pack(pady=2)
+        
+        # Intervallo
+        intervallo_label = ctk.CTkLabel(sidebar_frame, text="Intervallo:", font=ctk.CTkFont(size=14, weight="bold"))
+        intervallo_label.pack(pady=(0, 5))
+        
+        self.intervallo_combo = ctk.CTkComboBox(
+            sidebar_frame,
+            values=["giorno", "settimana", "mese"],
+            width=260,
+            height=35,
+            state="readonly"
+        )
+        self.intervallo_combo.set("settimana")  # Default
+        self.intervallo_combo.pack(pady=(0, 20))
+        
+        # Pulsante crea obiettivo
+        create_btn = ctk.CTkButton(
+            sidebar_frame,
+            text="Crea Obiettivo",
+            command=self.create_new_goal,
+            height=40,
+            font=ctk.CTkFont(size=14, weight="bold"),
+            fg_color=("#2d5aa0", "#3b82f6"),
+            hover_color=("#1e40af", "#60a5fa")
+        )
+        create_btn.pack(pady=(0, 20))
+    
+    def create_goals_list_area(self, parent):
+        """Crea l'area per visualizzare la lista degli obiettivi"""
+        # Frame principale per lista
+        list_frame = ctk.CTkScrollableFrame(parent, label_text="I Tuoi Obiettivi")
+        list_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        
+        self.goals_container = list_frame
+        
+        # Messaggio iniziale (verrà sostituito dalla lista)
+        self.no_goals_label = ctk.CTkLabel(
+            self.goals_container,
+            text="Nessun obiettivo creato ancora.\\nCrea il tuo primo obiettivo!",
+            font=ctk.CTkFont(size=16),
+            text_color="gray"
+        )
+        self.no_goals_label.pack(pady=50)
+    
+    def load_subjects(self):
+        """Carica la lista delle materie disponibili"""
+        try:
+            # Usa la stessa logica di NewSessionWindow
+            subjects_data = dataM.load_subjects(self.current_user)
+            if isinstance(subjects_data, dict):
+                # Se è un dizionario, prendi le materie per questo utente
+                if self.current_user in subjects_data:
+                    self.subjects_list = subjects_data[self.current_user]
+                else:
+                    self.subjects_list = list(subjects_data.keys()) if subjects_data else []
+            elif isinstance(subjects_data, list):
+                self.subjects_list = subjects_data
+            else:
+                self.subjects_list = []
+                
+            if not self.subjects_list:
+                messagebox.showwarning(
+                    "Attenzione", 
+                    "Nessuna materia trovata.\\nCrea prima delle materie nella sezione Gestione Materie."
+                )
+                self.subjects_list = ["Nessuna materia disponibile"]
+        except Exception as e:
+            print(f"Errore caricamento materie: {e}")
+            self.subjects_list = ["Errore nel caricamento"]
+    
+    def create_new_goal(self):
+        """Crea un nuovo obiettivo"""
+        try:
+            # Validazioni
+            materia = self.materia_combo.get()
+            if not materia or materia in ["Nessuna materia disponibile", "Errore nel caricamento"]:
+                messagebox.showerror("Errore", "Seleziona una materia valida!")
+                return
+            
+            # Ore
+            ore_text = self.ore_entry.get().strip()
+            if not ore_text:
+                ore = 0
+            else:
+                try:
+                    ore = int(ore_text)
+                    if ore < 0:
+                        raise ValueError("Le ore non possono essere negative")
+                except ValueError:
+                    messagebox.showerror("Errore", "Inserisci un numero valido per le ore!")
+                    return
+            
+            # Minuti
+            minuti_text = self.minuti_entry.get().strip()
+            if not minuti_text:
+                minuti = 0
+            else:
+                try:
+                    minuti = int(minuti_text)
+                    if minuti < 0 or minuti >= 60:
+                        raise ValueError("I minuti devono essere tra 0 e 59")
+                except ValueError:
+                    messagebox.showerror("Errore", "Inserisci un numero valido per i minuti (0-59)!")
+                    return
+            
+            # Controllo tempo totale
+            if ore == 0 and minuti == 0:
+                messagebox.showerror("Errore", "L'obiettivo deve avere almeno 1 minuto!")
+                return
+            
+            # Intervallo
+            intervallo = self.intervallo_combo.get()
+            if not intervallo:
+                messagebox.showerror("Errore", "Seleziona un intervallo valido!")
+                return
+            
+            # Crea l'obiettivo
+            success = self.goals_manager.create_goal(
+                user=self.current_user,
+                materia=materia,
+                ore_target=ore,
+                minuti_target=minuti,
+                intervallo=intervallo
+            )
+            
+            if success:
+                messagebox.showinfo("Successo", f"Obiettivo creato!\\n\\nMateria: {materia}\\nTempo: {self.goals_manager.format_time(ore*60 + minuti)}\\nIntervallo: {intervallo}")
+                
+                # Reset form
+                self.ore_entry.delete(0, 'end')
+                self.minuti_entry.delete(0, 'end')
+                self.intervallo_combo.set("settimana")
+                
+                # Ricarica la lista
+                self.load_goals()
+            else:
+                messagebox.showerror("Errore", "Errore nella creazione dell'obiettivo!")
+                
+        except Exception as e:
+            messagebox.showerror("Errore", f"Errore creazione obiettivo!\\n\\nDettagli: {e}")
+    
+    def load_goals(self):
+        """Carica e visualizza tutti gli obiettivi dell'utente"""
+        try:
+            # Pulisce il contenitore
+            for widget in self.goals_container.winfo_children():
+                widget.destroy()
+            
+            # Carica gli obiettivi
+            goals = self.goals_manager.get_user_goals(self.current_user)
+            
+            if not goals:
+                self.no_goals_label = ctk.CTkLabel(
+                    self.goals_container,
+                    text="Nessun obiettivo creato ancora.\\nCrea il tuo primo obiettivo!",
+                    font=ctk.CTkFont(size=16),
+                    text_color="gray"
+                )
+                self.no_goals_label.pack(pady=50)
+                return
+            
+            # Ordina per data di creazione (più recenti prima)
+            goals.sort(key=lambda x: x.get('data_creazione', ''), reverse=True)
+            
+            # Crea widget per ogni obiettivo
+            for goal in goals:
+                self.create_goal_widget(goal)
+                
+        except Exception as e:
+            print(f"Errore caricamento obiettivi: {e}")
+            error_label = ctk.CTkLabel(
+                self.goals_container,
+                text=f"Errore nel caricamento:\\n{str(e)}",
+                font=ctk.CTkFont(size=14),
+                text_color="red"
+            )
+            error_label.pack(pady=20)
+    
+    def create_goal_widget(self, goal):
+        """Crea un widget per visualizzare un singolo obiettivo"""
+        try:
+            # Calcola il progresso
+            minuti_studiati, minuti_target, percentuale = self.goals_manager.calculate_progress(
+                self.current_user, goal
+            )
+            
+            # Colore basato sullo stato
+            color = self.goals_manager.get_goal_status_color(percentuale)
+            
+            # Frame principale per l'obiettivo
+            goal_frame = ctk.CTkFrame(
+                self.goals_container,
+                corner_radius=10,
+                border_width=2,
+                border_color=color
+            )
+            goal_frame.pack(fill="x", padx=10, pady=8)
+            
+            # Header con materia e stato
+            header_frame = ctk.CTkFrame(goal_frame, fg_color="transparent")
+            header_frame.pack(fill="x", padx=15, pady=(15, 5))
+            
+            # Materia
+            materia_label = ctk.CTkLabel(
+                header_frame,
+                text=goal['materia'],
+                font=ctk.CTkFont(size=18, weight="bold")
+            )
+            materia_label.pack(side="left")
+            
+            # Status badge
+            if goal.get('completato'):
+                status_text = "COMPLETATO"
+                status_color = "#28a745"
+            else:
+                status_text = f"{percentuale:.1f}%"
+                status_color = color
+            
+            status_label = ctk.CTkLabel(
+                header_frame,
+                text=status_text,
+                font=ctk.CTkFont(size=12, weight="bold"),
+                text_color=status_color
+            )
+            status_label.pack(side="right")
+            
+            # Info obiettivo
+            info_frame = ctk.CTkFrame(goal_frame, fg_color="transparent")
+            info_frame.pack(fill="x", padx=15, pady=5)
+            
+            # Target e progresso
+            target_time = self.goals_manager.format_time(minuti_target)
+            studied_time = self.goals_manager.format_time(minuti_studiati)
+            
+            target_label = ctk.CTkLabel(
+                info_frame,
+                text=f"Obiettivo: {target_time} / {goal['intervallo']}",
+                font=ctk.CTkFont(size=14)
+            )
+            target_label.pack(side="left")
+            
+            progress_label = ctk.CTkLabel(
+                info_frame,
+                text=f"Progresso: {studied_time}",
+                font=ctk.CTkFont(size=14)
+            )
+            progress_label.pack(side="right")
+            
+            # Barra di progresso
+            progress_frame = ctk.CTkFrame(goal_frame, fg_color="transparent")
+            progress_frame.pack(fill="x", padx=15, pady=5)
+            
+            progress_bar = ctk.CTkProgressBar(progress_frame, width=400, height=20)
+            progress_bar.pack(fill="x")
+            progress_bar.set(min(1.0, percentuale / 100))
+            
+            # Frame pulsanti
+            buttons_frame = ctk.CTkFrame(goal_frame, fg_color="transparent")
+            buttons_frame.pack(fill="x", padx=15, pady=(5, 15))
+            
+            # Pulsante elimina
+            delete_btn = ctk.CTkButton(
+                buttons_frame,
+                text="Elimina",
+                command=lambda: self.delete_goal(goal['id']),
+                height=25,
+                width=80,
+                fg_color="#dc3545",
+                hover_color="#c82333",
+                font=ctk.CTkFont(size=12)
+            )
+            delete_btn.pack(side="right")
+            
+        except Exception as e:
+            print(f"Errore creazione widget obiettivo: {e}")
+    
+    def delete_goal(self, goal_id):
+        """Elimina un obiettivo"""
+        try:
+            # Conferma eliminazione
+            if messagebox.askyesno("Conferma", "Sei sicuro di voler eliminare questo obiettivo?"):
+                success = self.goals_manager.delete_goal(goal_id)
+                if success:
+                    messagebox.showinfo("Successo", "Obiettivo eliminato!")
+                    self.load_goals()  # Ricarica la lista
+                else:
+                    messagebox.showerror("Errore", "Errore nell'eliminazione dell'obiettivo!")
+        except Exception as e:
+            messagebox.showerror("Errore", f"Errore eliminazione!\\n\\nDettagli: {e}")
+    
+    def check_new_completions(self):
+        """Controlla se ci sono obiettivi appena completati"""
+        try:
+            completed_goals = self.goals_manager.check_completed_goals(self.current_user)
+            
+            for goal in completed_goals:
+                materia = goal['materia']
+                target_time = self.goals_manager.format_time(goal['tempo_target_minuti'])
+                intervallo = goal['intervallo']
+                
+                messagebox.showinfo(
+                    "Obiettivo Raggiunto!",
+                    f"Congratulazioni!\\n\\nHai completato l'obiettivo:\\n\\n"
+                    f"Materia: {materia}\\n"
+                    f"Tempo: {target_time}\\n"
+                    f"Intervallo: {intervallo}\\n\\n"
+                    f"Continua cosi!"
+                )
+            
+        except Exception as e:
+            print(f"Errore controllo completamenti: {e}")

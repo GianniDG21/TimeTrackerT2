@@ -133,7 +133,7 @@ class TimeTrackerApp(ctk.CTk):
         
         # Grid layout
         self.menu_frame.grid_rowconfigure((0, 1), weight=1)
-        self.menu_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        self.menu_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
         
         # Pulsante Nuova Sessione
         self.new_session_btn = ctk.CTkButton(
@@ -180,6 +180,21 @@ class TimeTrackerApp(ctk.CTk):
         )
         self.timer_btn.grid(row=0, column=2, padx=15, pady=15, sticky="nsew")
         
+        # Pulsante Obiettivi
+        self.goals_btn = ctk.CTkButton(
+            self.menu_frame,
+            text="Obiettivi",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            command=self.show_goals,
+            height=80,
+            corner_radius=15,
+            fg_color=("#b45309", "#d97706"),
+            hover_color=("#d97706", "#f59e0b"),
+            border_width=1,
+            border_color=("#f59e0b", "#fbbf24")
+        )
+        self.goals_btn.grid(row=0, column=3, padx=15, pady=15, sticky="nsew")
+        
         # Pulsante Gestione Materie
         self.subjects_btn = ctk.CTkButton(
             self.menu_frame,
@@ -224,6 +239,21 @@ class TimeTrackerApp(ctk.CTk):
             border_color=("#f472b6", "#fbbf24")
         )
         self.analytics_btn.grid(row=1, column=2, padx=15, pady=15, sticky="nsew")
+        
+        # Pulsante Impostazioni (rimanente)
+        self.settings_btn = ctk.CTkButton(
+            self.menu_frame,
+            text="Impostazioni",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            command=self.show_settings,
+            height=80,
+            corner_radius=15,
+            fg_color=("#374151", "#6b7280"),
+            hover_color=("#6b7280", "#9ca3af"),
+            border_width=1,
+            border_color=("#9ca3af", "#d1d5db")
+        )
+        self.settings_btn.grid(row=1, column=3, padx=15, pady=15, sticky="nsew")
 
     def create_footer(self):
         """Crea footer con info"""
@@ -298,6 +328,14 @@ class TimeTrackerApp(ctk.CTk):
             analytics_window = AnalyticsWindow(self)
         except Exception as e:
             messagebox.showerror("Errore Analytics", f"Errore apertura analytics: {e}")
+    
+    def show_goals(self):
+        """Mostra finestra gestione obiettivi"""
+        try:
+            from gui_windows import GoalsWindow
+            goals_window = GoalsWindow(self)
+        except Exception as e:
+            messagebox.showerror("Errore Obiettivi", f"Errore apertura obiettivi: {e}")
 
     def show_settings(self):
         """Mostra impostazioni - WIP"""
