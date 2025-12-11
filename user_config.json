@@ -1,4 +1,4 @@
 {
-  "default_user": "Utente Demo",
-  "auto_login": true
+  "default_user": null,
+  "auto_login": false
 }
