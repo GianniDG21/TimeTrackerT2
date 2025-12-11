@@ -250,7 +250,7 @@ class TimeTrackerApp(ctk.CTk):
         if any(portable_indicators):
             portable_label = ctk.CTkLabel(
                 self.info_frame,
-                text="🎒 Modalità Portable Attiva",
+                text="Modalita' Portable Attiva",
                 font=ctk.CTkFont(size=10),
                 text_color=("#4ade80", "#22c55e")
             )
@@ -301,7 +301,7 @@ class TimeTrackerApp(ctk.CTk):
 
     def show_settings(self):
         """Mostra impostazioni - WIP"""
-        messagebox.showinfo("Impostazioni - WIP", "🚧 Funzionalità in sviluppo!\nSarai tu a implementarla! 💻")
+        messagebox.showinfo("Impostazioni - WIP", "Funzionalita' in sviluppo!\nSarai tu a implementarla!")
         
     def on_closing(self):
         """Gestisce la chiusura sicura dell'applicazione"""

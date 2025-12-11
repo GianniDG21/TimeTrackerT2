@@ -67,7 +67,7 @@ class NewSessionWindow:
         # Titolo
         title_label = ctk.CTkLabel(
             main_frame,
-            text="🚀 Nuova Sessione di Studio",
+            text="Nuova Sessione di Studio",
             font=ctk.CTkFont(size=24, weight="bold")
         )
         title_label.pack(pady=(20, 30))
@@ -104,7 +104,7 @@ class NewSessionWindow:
         
         duration_label = ctk.CTkLabel(
             duration_frame,
-            text="⏱️ Durata (minuti):",
+            text="Durata (minuti):",
             font=ctk.CTkFont(size=16, weight="bold")
         )
         duration_label.pack(pady=(15, 5))
@@ -143,7 +143,7 @@ class NewSessionWindow:
         # Pulsante Avvia Timer - Design elegante
         self.start_timer_btn = ctk.CTkButton(
             button_frame,
-            text="⏱️ Avvia con Timer",
+            text="Avvia con Timer",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.start_with_timer,
             height=40,
@@ -259,7 +259,7 @@ class NewSessionWindow:
             success = dataM.save_session(self.main_app.current_user, subject, duration)
             
             if success:
-                messagebox.showinfo("Successo", f"✅ Sessione manuale salvata!\n\n📚 Materia: {subject}\n⏱️ Durata: {duration} minuti")
+                messagebox.showinfo("Successo", f"Sessione manuale salvata!\n\nMateria: {subject}\nDurata: {duration} minuti")
                 self.window.destroy()
             else:
                 messagebox.showerror("Errore", "❌ Errore nel salvataggio della sessione!")
@@ -323,7 +323,7 @@ class SessionHistoryWindow:
         # Titolo
         title_label = ctk.CTkLabel(
             main_frame,
-            text="📊 Storico Sessioni",
+            text="Storico Sessioni",
             font=ctk.CTkFont(size=24, weight="bold")
         )
         title_label.pack(pady=(20, 20))
@@ -480,7 +480,7 @@ class SubjectManagementWindow:
         # Titolo
         title_label = ctk.CTkLabel(
             main_frame,
-            text="📚 Gestione Materie",
+            text="Gestione Materie",
             font=ctk.CTkFont(size=24, weight="bold")
         )
         title_label.pack(pady=(20, 20))
@@ -683,7 +683,7 @@ class TimerWindow:
         self.timer_thread = None
         
         self.window = ctk.CTkToplevel(main_app)
-        self.window.title(f"⏱️ Timer - {subject}")
+        self.window.title(f"Timer - {subject}")
         self.window.geometry("700x550")
         self.window.resizable(True, True)
         self.window.minsize(600, 500)
@@ -883,7 +883,7 @@ class TimerWindow:
             if success:
                 messagebox.showinfo(
                     "Sessione Completata", 
-                    f"✅ Sessione salvata con successo!\n\n📚 Materia: {self.subject}\n⏱️ Durata: {effective_duration} minuti"
+                    f"Sessione salvata con successo!\n\nMateria: {self.subject}\nDurata: {effective_duration} minuti"
                 )
             else:
                 messagebox.showerror("Errore", "❌ Errore nel salvataggio della sessione!")
@@ -1426,11 +1426,11 @@ class AnalyticsWindow:
         period_label = ctk.CTkLabel(controls_frame, text="Periodo:")
         period_label.grid(row=1, column=0, padx=10, pady=10)
         
-        self.period_var = ctk.StringVar(value="all")
+        self.period_var = ctk.StringVar(value="tutto")
         period_menu = ctk.CTkOptionMenu(
             controls_frame,
             variable=self.period_var,
-            values=["all", "today", "week", "month"],
+            values=["tutto", "oggi", "settimana", "mese"],
             command=self.on_period_change
         )
         period_menu.grid(row=1, column=1, padx=10, pady=10)

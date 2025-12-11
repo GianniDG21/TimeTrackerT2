@@ -27,7 +27,7 @@ class ChartGenerator:
         self.engine = analytics_engine
         self.colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F']
         
-    def create_subject_distribution_chart(self, period="all", chart_type="pie"):
+    def create_subject_distribution_chart(self, period="tutto", chart_type="pie"):
         """Crea grafico distribuzione tempo per materia"""
         data = self.engine.get_study_time_by_subject(period)
         
@@ -55,14 +55,18 @@ class ChartGenerator:
                 text.set_color('white')
                 text.set_fontsize(11)
             
-            ax.set_title(f'Distribuzione Tempo per Materia ({period})', 
+            period_names = {'tutto': 'Tutto', 'oggi': 'Oggi', 'settimana': 'Settimana', 'mese': 'Mese', 'all': 'Tutto', 'today': 'Oggi', 'week': 'Settimana', 'month': 'Mese'}
+            period_display = period_names.get(period, period)
+            ax.set_title(f'Distribuzione Tempo per Materia ({period_display})', 
                         color='white', fontsize=14, pad=20)
                         
         else:  # bar chart
             ax = fig.add_subplot(111)
             bars = ax.bar(data.keys(), data.values(), color=self.colors[:len(data)])
             
-            ax.set_title(f'Ore di Studio per Materia ({period})', 
+            period_names = {'tutto': 'Tutto', 'oggi': 'Oggi', 'settimana': 'Settimana', 'mese': 'Mese', 'all': 'Tutto', 'today': 'Oggi', 'week': 'Settimana', 'month': 'Mese'}
+            period_display = period_names.get(period, period)
+            ax.set_title(f'Ore di Studio per Materia ({period_display})', 
                         color='white', fontsize=14, pad=20)
             ax.set_xlabel('Materie', color='white')
             ax.set_ylabel('Ore di Studio', color='white')

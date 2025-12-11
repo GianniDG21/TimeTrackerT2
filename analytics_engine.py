@@ -70,7 +70,7 @@ class AnalyticsEngine:
             print(f"Errore parsing durata: {duration_str}")
             return 0
     
-    def get_total_study_time(self, period="all"):
+    def get_total_study_time(self, period="tutto"):
         """Calcola il tempo totale di studio"""
         if self.df.empty:
             return 0
@@ -78,7 +78,7 @@ class AnalyticsEngine:
         filtered_df = self._filter_by_period(period)
         return filtered_df['durata_ore'].sum() if not filtered_df.empty else 0
     
-    def get_study_time_by_subject(self, period="all"):
+    def get_study_time_by_subject(self, period="tutto"):
         """Tempo di studio per materia"""
         if self.df.empty:
             return {}
@@ -179,7 +179,7 @@ class AnalyticsEngine:
         if self.df.empty:
             return {}
         
-        weekday_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        weekday_order = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica']
         weekday_stats = self.df.groupby('weekday')['durata_ore'].sum()
         
         return {day: weekday_stats.get(day, 0) for day in weekday_order}
@@ -191,9 +191,9 @@ class AnalyticsEngine:
                 'total_sessions': 0,
                 'total_hours': 0,
                 'avg_session_length': 0,
-                'most_studied_subject': 'N/A',
-                'most_productive_hour': 'N/A',
-                'most_productive_day': 'N/A'
+                'most_studied_subject': 'N/D',
+                'most_productive_hour': 'N/D',
+                'most_productive_day': 'N/D'
             }
         
         subject_stats = self.df.groupby('materia')['durata_ore'].sum()
@@ -204,24 +204,24 @@ class AnalyticsEngine:
             'total_sessions': len(self.df),
             'total_hours': self.df['durata_ore'].sum(),
             'avg_session_length': self.df['durata_ore'].mean(),
-            'most_studied_subject': subject_stats.idxmax() if not subject_stats.empty else 'N/A',
-            'most_productive_hour': f"{hour_stats.idxmax()}:00" if not hour_stats.empty else 'N/A',
-            'most_productive_day': day_stats.idxmax() if not day_stats.empty else 'N/A'
+            'most_studied_subject': subject_stats.idxmax() if not subject_stats.empty else 'N/D',
+            'most_productive_hour': f"{hour_stats.idxmax()}:00" if not hour_stats.empty else 'N/D',
+            'most_productive_day': day_stats.idxmax() if not day_stats.empty else 'N/D'
         }
     
     def _filter_by_period(self, period):
         """Filtra il DataFrame per periodo"""
-        if self.df.empty or period == "all":
+        if self.df.empty or period in ["all", "tutto"]:
             return self.df
         
         now = datetime.now()
         
-        if period == "today":
+        if period in ["today", "oggi"]:
             return self.df[self.df['date'] == now.date()]
-        elif period == "week":
+        elif period in ["week", "settimana"]:
             start_week = now - timedelta(days=7)
             return self.df[self.df['datetime'] >= start_week]
-        elif period == "month":
+        elif period in ["month", "mese"]:
             start_month = now - timedelta(days=30)
             return self.df[self.df['datetime'] >= start_month]
         else:

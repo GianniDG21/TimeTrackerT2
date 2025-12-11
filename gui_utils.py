@@ -95,7 +95,7 @@ class StatsCalculator:
     def get_productivity_insights(sessions):
         """Genera insights di produttività"""
         if not sessions or len(sessions) < 5:
-            return ["Accumula più sessioni per vedere insights personalizzati! 📊"]
+            return ["Accumula piu' sessioni per vedere insights personalizzati!"]
         
         stats = StatsCalculator.calculate_session_stats(sessions)
         insights = []
@@ -113,25 +113,25 @@ class StatsCalculator:
         # Insight sulla durata sessioni
         avg_session = stats['average_session']
         if avg_session >= 45:
-            insights.append("🎯 Eccellente focus! Sessioni lunghe e produttive")
+            insights.append("Eccellente focus! Sessioni lunghe e produttive")
         elif avg_session >= 25:
             insights.append("⚡ Buon ritmo di studio con sessioni equilibrate")
         else:
-            insights.append("🚀 Prova sessioni più lunghe per maggiore concentrazione")
+            insights.append("Prova sessioni piu' lunghe per maggiore concentrazione")
         
         # Insight sulla varietà
         subjects_count = len(stats['subjects_stats'])
         if subjects_count >= 4:
             insights.append("🌟 Ottima varietà di studio! Mantieni l'equilibrio")
         elif subjects_count >= 2:
-            insights.append("📚 Buona diversificazione delle materie")
+            insights.append("Buona diversificazione delle materie")
         else:
             insights.append("🎨 Considera di aggiungere più materie per varietà")
         
         # Insight temporale
         recent_sessions = [s for s in sessions[-7:]]  # Ultime 7 sessioni
         if len(recent_sessions) >= 5:
-            insights.append("🚀 Sei in un ottimo periodo produttivo!")
+            insights.append("Sei in un ottimo periodo produttivo!")
         elif len(recent_sessions) >= 3:
             insights.append("📈 Stai mantenendo un buon ritmo di studio")
         
