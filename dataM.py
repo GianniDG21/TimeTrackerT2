@@ -54,7 +54,7 @@ def _get_next_session_id():
         print("Warning: Corrupted sessions file. Starting from ID 1")
         return 1
 
-def save_session(user, materia, durata):
+def save_session(user, materia, durata, note_argomento=None):
     session = {
         'id': _get_next_session_id(),
         'user': user,
@@ -62,10 +62,23 @@ def save_session(user, materia, durata):
         'durata': durata,
         'timestamp': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
+    
+    # Aggiungi nota se fornita
+    if note_argomento and note_argomento.strip():
+        session['note_argomento'] = note_argomento.strip()
+    
     try:
         with open('sessions.json', 'a') as f:
             json.dump(session, f)
             f.write('\n')  # Add newline for each session
+        
+        # Salva nota nel sistema progress se presente
+        if note_argomento and note_argomento.strip():
+            try:
+                _save_progress_note(user, materia, note_argomento.strip(), durata, session['id'])
+            except Exception as progress_error:
+                print(f"Errore salvataggio nota progresso: {progress_error}")
+                # Non interrompere il salvataggio se c'è un errore nelle note
         
         # Controllo automatico obiettivi raggiuti
         try:
@@ -78,6 +91,26 @@ def save_session(user, materia, durata):
     except Exception as e:
         print(f"Errore nel salvataggio della sessione: {e}")
         return False
+
+def _save_progress_note(user, materia, note_argomento, durata, session_id):
+    """Salva una nota di progresso collegata alla sessione"""
+    try:
+        from progress_manager import ProgressManager
+        
+        progress_manager = ProgressManager()
+        progress_manager.add_session_note(
+            user=user,
+            materia=materia,
+            argomento=note_argomento,
+            durata_sessione=durata,
+            session_id=session_id
+        )
+        
+    except ImportError:
+        # progress_manager non disponibile, ignora silenziosamente
+        pass
+    except Exception as e:
+        print(f"Errore nel salvataggio nota progresso: {e}")
 
 def _check_goals_after_session(user):
     """Controlla se ci sono obiettivi appena raggiunti dopo una sessione"""

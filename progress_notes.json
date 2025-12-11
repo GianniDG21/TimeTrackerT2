@@ -1,0 +1,55 @@
+[
+  {
+    "id": 1,
+    "user": "TestUser",
+    "materia": "Matematica",
+    "argomento": "Derivate parziali",
+    "durata_sessione": 45,
+    "ore_totali_materia": 0.0,
+    "timestamp": "2025-12-11T20:31:36.694061",
+    "session_id": null,
+    "tipo": "sessione"
+  },
+  {
+    "id": 2,
+    "user": "TestUser",
+    "materia": "Matematica",
+    "argomento": "Completato capitolo derivate",
+    "tipo": "milestone",
+    "timestamp": "2025-12-11T20:31:36.694561",
+    "ore_totali_materia": 0,
+    "descrizione": "Capiti tutti gli esercizi del capitolo 5"
+  },
+  {
+    "id": 3,
+    "user": "TestUser",
+    "materia": "Matematica",
+    "argomento": "Derivate parziali",
+    "durata_sessione": 45,
+    "ore_totali_materia": 0.0,
+    "timestamp": "2025-12-11T20:32:16.069238",
+    "session_id": null,
+    "tipo": "sessione"
+  },
+  {
+    "id": 4,
+    "user": "TestUser",
+    "materia": "Matematica",
+    "argomento": "Completato capitolo derivate",
+    "tipo": "milestone",
+    "timestamp": "2025-12-11T20:32:16.069738",
+    "ore_totali_materia": 0.0,
+    "descrizione": "Capiti tutti gli esercizi del capitolo 5"
+  },
+  {
+    "id": 5,
+    "user": "TestUser",
+    "materia": "Fisica",
+    "argomento": "Meccanica quantistica - Equazione di Schrödinger",
+    "durata_sessione": 60,
+    "ore_totali_materia": 1.0,
+    "timestamp": "2025-12-11T20:32:16.086739",
+    "session_id": 50,
+    "tipo": "sessione"
+  }
+]

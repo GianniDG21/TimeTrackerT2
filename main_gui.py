@@ -74,10 +74,10 @@ class TimeTrackerApp(ctk.CTk):
             return None
 
     def setup_window(self):
-        """Configura la finestra principale"""
-        self.title("TimeTrackerT2 v2.0")
-        self.geometry("900x650")
-        self.minsize(800, 600)
+        """Configura la finestra principale con stile Aero elegante"""
+        self.title("⏱️ TimeTrackerT2 Pro v2.0")
+        self.geometry("1200x800")
+        self.minsize(1000, 700)
         
         # Gestione chiusura sicura
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -88,8 +88,8 @@ class TimeTrackerApp(ctk.CTk):
     def center_window(self):
         """Centra la finestra sullo schermo"""
         self.update_idletasks()
-        width = 800
-        height = 600
+        width = 1200
+        height = 800
         pos_x = (self.winfo_screenwidth() // 2) - (width // 2)
         pos_y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
@@ -110,164 +110,272 @@ class TimeTrackerApp(ctk.CTk):
         self.create_footer()
         
     def create_header(self):
-        """Crea header con titolo e utente"""
-        self.header_frame = ctk.CTkFrame(self.main_frame, height=100, corner_radius=0)
+        """Crea header con effetto glass Aero elegante"""
+        self.header_frame = ctk.CTkFrame(
+            self.main_frame, 
+            height=120, 
+            corner_radius=0,
+            fg_color=("#1a237e", "#1565c0"),  # Gradient blue Aero
+            border_width=2,
+            border_color=("#3f51b5", "#42a5f5")
+        )
         self.header_frame.pack(fill="x", padx=0, pady=0)
         self.header_frame.pack_propagate(False)
         
-        # Titolo con nome utente
-        title_text = f"⏱️ TimeTrackerT2 v2.0 - {self.current_user}"
-        self.title_label = ctk.CTkLabel(
+        # Container interno con effetto glass
+        glass_frame = ctk.CTkFrame(
             self.header_frame,
-            text=title_text,
-            font=ctk.CTkFont(size=28, weight="bold"),
-            text_color=("#ffffff", "#f8fafc")
+            fg_color=("#e3f2fd", "#263238"),  # Glass effect colors
+            corner_radius=8,
+            border_width=1,
+            border_color=("#90caf9", "#455a64")
         )
-        self.title_label.pack(expand=True)
+        glass_frame.pack(fill="both", expand=True, padx=15, pady=15)
+        
+        # Titolo principale
+        title_text = f"⚡ TimeTrackerT2 Pro"
+        self.title_label = ctk.CTkLabel(
+            glass_frame,
+            text=title_text,
+            font=ctk.CTkFont(size=36, weight="bold"),
+            text_color=("#ffffff", "#e3f2fd")
+        )
+        self.title_label.pack(pady=(10, 0))
+        
+        # Sottotitolo con utente
+        subtitle_text = f"🚀 Benvenuto {self.current_user} - v2.0 Advanced Edition"
+        self.subtitle_label = ctk.CTkLabel(
+            glass_frame,
+            text=subtitle_text,
+            font=ctk.CTkFont(size=16, weight="normal"),
+            text_color=("#bbdefb", "#90caf9")
+        )
+        self.subtitle_label.pack(pady=(0, 10))
 
     def create_menu_buttons(self):
-        """Crea menu con pulsanti principali"""
-        # Frame menu
-        self.menu_frame = ctk.CTkFrame(self.main_frame, corner_radius=15)
-        self.menu_frame.pack(fill="both", expand=True, padx=20, pady=15)
+        """Crea menu con design Aero cards elegante"""
+        # Frame menu principale con gradient background
+        self.menu_frame = ctk.CTkFrame(
+            self.main_frame, 
+            corner_radius=20,
+            fg_color=("#f5f7fa", "#1a1b23"),  # Background neutro elegante
+            border_width=2,
+            border_color=("#e0e7ff", "#374151")
+        )
+        self.menu_frame.pack(fill="both", expand=True, padx=25, pady=20)
         
-        # Grid layout
-        self.menu_frame.grid_rowconfigure((0, 1), weight=1)
-        self.menu_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        # Grid layout 3x3 per migliore organizzazione
+        self.menu_frame.grid_rowconfigure((0, 1, 2), weight=1)
+        self.menu_frame.grid_columnconfigure((0, 1, 2), weight=1)
         
-        # Pulsante Nuova Sessione
+        # === PRIMA RIGA - FUNZIONI PRINCIPALI ===
+        
+        # Card Nuova Sessione - Primaria
         self.new_session_btn = ctk.CTkButton(
             self.menu_frame,
-            text="Nuova Sessione",
-            font=ctk.CTkFont(size=16, weight="bold"),
+            text="🎯 Nuova Sessione\n\nAvvia studio",
+            font=ctk.CTkFont(size=18, weight="bold"),
             command=self.show_new_session,
-            height=80,
-            corner_radius=15,
-            fg_color=("#1f4e79", "#2563eb"),
-            hover_color=("#1e40af", "#3b82f6"),
-            border_width=1,
-            border_color=("#3b82f6", "#60a5fa")
+            height=120,
+            corner_radius=18,
+            fg_color=("#2563eb", "#1d4ed8"),  # Blu Aero primario
+            hover_color=("#1d4ed8", "#2563eb"),
+            border_width=2,
+            border_color=("#60a5fa", "#93c5fd"),
+            text_color=("#ffffff", "#f8fafc")
         )
-        self.new_session_btn.grid(row=0, column=0, padx=15, pady=15, sticky="nsew")
+        self.new_session_btn.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
         
-        # Pulsante Storico Sessioni
-        self.history_btn = ctk.CTkButton(
-            self.menu_frame,
-            text="Storico Sessioni",
-            font=ctk.CTkFont(size=16, weight="bold"),
-            command=self.show_session_history,
-            height=80,
-            corner_radius=15,
-            fg_color=("#166534", "#16a34a"),
-            hover_color=("#15803d", "#22c55e"),
-            border_width=1,
-            border_color=("#22c55e", "#4ade80")
-        )
-        self.history_btn.grid(row=0, column=1, padx=15, pady=15, sticky="nsew")
-        
-        # Pulsante Timer  
+        # Card Cronometro - Azione rapida
         self.timer_btn = ctk.CTkButton(
             self.menu_frame,
-            text="Cronometro",
-            font=ctk.CTkFont(size=16, weight="bold"),
+            text="⏱️ Cronometro\n\nTimer libero",
+            font=ctk.CTkFont(size=18, weight="bold"),
             command=self.show_stopwatch,
-            height=80,
-            corner_radius=15,
-            fg_color=("#c2410c", "#ea580c"),
-            hover_color=("#ea580c", "#f97316"),
-            border_width=1,
-            border_color=("#f97316", "#fb923c")
+            height=120,
+            corner_radius=18,
+            fg_color=("#dc2626", "#b91c1c"),  # Rosso elegante
+            hover_color=("#b91c1c", "#dc2626"),
+            border_width=2,
+            border_color=("#f87171", "#fca5a5"),
+            text_color=("#ffffff", "#fef2f2")
         )
-        self.timer_btn.grid(row=0, column=2, padx=15, pady=15, sticky="nsew")
+        self.timer_btn.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
         
-        # Pulsante Obiettivi
+        # Card Storico - Visualizzazione dati
+        self.history_btn = ctk.CTkButton(
+            self.menu_frame,
+            text="📊 Storico\n\nTutte le sessioni",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            command=self.show_session_history,
+            height=120,
+            corner_radius=18,
+            fg_color=("#059669", "#047857"),  # Verde professionale
+            hover_color=("#047857", "#059669"),
+            border_width=2,
+            border_color=("#34d399", "#6ee7b7"),
+            text_color=("#ffffff", "#f0fdfa")
+        )
+        self.history_btn.grid(row=0, column=2, padx=20, pady=20, sticky="nsew")
+
+        # === SECONDA RIGA - TRACCIAMENTO AVANZATO ===
+        
+        # Card Obiettivi - Gestione goals
         self.goals_btn = ctk.CTkButton(
             self.menu_frame,
-            text="Obiettivi",
-            font=ctk.CTkFont(size=16, weight="bold"),
+            text="🎯 Obiettivi\n\nMete e progressi",
+            font=ctk.CTkFont(size=18, weight="bold"),
             command=self.show_goals,
-            height=80,
-            corner_radius=15,
-            fg_color=("#b45309", "#d97706"),
-            hover_color=("#d97706", "#f59e0b"),
-            border_width=1,
-            border_color=("#f59e0b", "#fbbf24")
+            height=120,
+            corner_radius=18,
+            fg_color=("#d97706", "#b45309"),  # Arancione ambizioso
+            hover_color=("#b45309", "#d97706"),
+            border_width=2,
+            border_color=("#fbbf24", "#fcd34d"),
+            text_color=("#ffffff", "#fffbeb")
         )
-        self.goals_btn.grid(row=0, column=3, padx=15, pady=15, sticky="nsew")
+        self.goals_btn.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
         
-        # Pulsante Gestione Materie
-        self.subjects_btn = ctk.CTkButton(
+        # Card Registro Argomenti - NUOVO
+        self.notes_btn = ctk.CTkButton(
             self.menu_frame,
-            text="Gestione Materie",
-            font=ctk.CTkFont(size=16, weight="bold"),
-            command=self.show_subject_management,
-            height=80,
-            corner_radius=15,
-            fg_color=("#7c2d92", "#a855f7"),
-            hover_color=("#9333ea", "#c084fc"),
-            border_width=1,
-            border_color=("#c084fc", "#ddd6fe")
+            text="📝 Registro Argomenti\n\nTempo per argomento",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            command=self.show_notes,
+            height=120,
+            corner_radius=18,
+            fg_color=("#7c3aed", "#6d28d9"),  # Viola creativo
+            hover_color=("#6d28d9", "#7c3aed"),
+            border_width=2,
+            border_color=("#a78bfa", "#c4b5fd"),
+            text_color=("#ffffff", "#faf5ff")
         )
-        self.subjects_btn.grid(row=1, column=0, padx=15, pady=15, sticky="nsew")
+        self.notes_btn.grid(row=1, column=1, padx=20, pady=20, sticky="nsew")
         
-        # Pulsante Cambio Utente
-        self.user_btn = ctk.CTkButton(
-            self.menu_frame,
-            text="Cambia Utente",
-            font=ctk.CTkFont(size=16, weight="bold"),
-            command=self.show_change_user,
-            height=80,
-            corner_radius=15,
-            fg_color=("#0f766e", "#14b8a6"),
-            hover_color=("#0d9488", "#5eead4"),
-            border_width=1,
-            border_color=("#5eead4", "#99f6e4")
-        )
-        self.user_btn.grid(row=1, column=1, padx=15, pady=15, sticky="nsew")
-        
-        # Pulsante Analytics
+        # Card Analytics - Dati avanzati  
         self.analytics_btn = ctk.CTkButton(
             self.menu_frame,
-            text="Analytics\nGrafici & Statistiche",
-            font=ctk.CTkFont(size=14, weight="bold"),
+            text="📈 Analytics\n\nGrafici e statistiche",
+            font=ctk.CTkFont(size=18, weight="bold"),
             command=self.show_analytics,
-            height=80,
-            corner_radius=15,
-            fg_color=("#be185d", "#ec4899"),
-            hover_color=("#db2777", "#f472b6"),
-            border_width=1,
-            border_color=("#f472b6", "#fbbf24")
+            height=120,
+            corner_radius=18,
+            fg_color=("#be185d", "#a21caf"),  # Rosa analitico
+            hover_color=("#a21caf", "#be185d"),
+            border_width=2,
+            border_color=("#f472b6", "#f9a8d4"),
+            text_color=("#ffffff", "#fdf2f8")
         )
-        self.analytics_btn.grid(row=1, column=2, padx=15, pady=15, sticky="nsew")
+        self.analytics_btn.grid(row=1, column=2, padx=20, pady=20, sticky="nsew")
+
+        # === TERZA RIGA - CONFIGURAZIONE ===
         
-        # Pulsante Impostazioni (rimanente)
+        # Card Gestione Materie
+        self.subjects_btn = ctk.CTkButton(
+            self.menu_frame,
+            text="📚 Materie\n\nGestisci argomenti",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            command=self.show_subject_management,
+            height=120,
+            corner_radius=18,
+            fg_color=("#0891b2", "#0e7490"),  # Cyan accademico
+            hover_color=("#0e7490", "#0891b2"),
+            border_width=2,
+            border_color=("#22d3ee", "#67e8f9"),
+            text_color=("#ffffff", "#ecfeff")
+        )
+        self.subjects_btn.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
+        
+        # Card Cambio Utente
+        self.user_btn = ctk.CTkButton(
+            self.menu_frame,
+            text="👤 Utente\n\nCambia profilo",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            command=self.show_change_user,
+            height=120,
+            corner_radius=18,
+            fg_color=("#0d9488", "#0f766e"),  # Teal user
+            hover_color=("#0f766e", "#0d9488"),
+            border_width=2,
+            border_color=("#5eead4", "#99f6e4"),
+            text_color=("#ffffff", "#f0fdfa")
+        )
+        self.user_btn.grid(row=2, column=1, padx=20, pady=20, sticky="nsew")
+        
+        # Card Impostazioni
         self.settings_btn = ctk.CTkButton(
             self.menu_frame,
-            text="Impostazioni",
-            font=ctk.CTkFont(size=16, weight="bold"),
+            text="⚙️ Impostazioni\n\nConfigurazione",
+            font=ctk.CTkFont(size=18, weight="bold"),
             command=self.show_settings,
-            height=80,
-            corner_radius=15,
-            fg_color=("#374151", "#6b7280"),
-            hover_color=("#6b7280", "#9ca3af"),
-            border_width=1,
-            border_color=("#9ca3af", "#d1d5db")
+            height=120,
+            corner_radius=18,
+            fg_color=("#6b7280", "#4b5563"),  # Grigio neutro
+            hover_color=("#4b5563", "#6b7280"),
+            border_width=2,
+            border_color=("#9ca3af", "#d1d5db"),
+            text_color=("#ffffff", "#f9fafb")
         )
-        self.settings_btn.grid(row=1, column=3, padx=15, pady=15, sticky="nsew")
+        self.settings_btn.grid(row=2, column=2, padx=20, pady=20, sticky="nsew")
 
     def create_footer(self):
-        """Crea footer con info"""
-        self.info_frame = ctk.CTkFrame(self.main_frame, height=35, corner_radius=0)
+        """Crea footer elegante con stile glass Aero"""
+        self.info_frame = ctk.CTkFrame(
+            self.main_frame, 
+            height=60, 
+            corner_radius=0,
+            fg_color=("#e0e7ff", "#1e293b"),  # Background elegante
+            border_width=1,
+            border_color=("#c7d2fe", "#475569")
+        )
         self.info_frame.pack(fill="x", side="bottom", padx=0, pady=0)
         self.info_frame.pack_propagate(False)
         
-        # Versione
-        version_label = ctk.CTkLabel(
+        # Container glass interno
+        glass_container = ctk.CTkFrame(
             self.info_frame,
-            text="TimeTrackerT2",
-            font=ctk.CTkFont(size=10)
+            fg_color=("#f8fafc", "#334155"),
+            corner_radius=8,
+            border_width=1,
+            border_color=("#cbd5e1", "#64748b")
         )
-        version_label.pack(side="left", padx=10, pady=5)
+        glass_container.pack(fill="both", expand=True, padx=15, pady=10)
+        
+        # Frame sinistra - Info versione
+        left_frame = ctk.CTkFrame(glass_container, fg_color="transparent")
+        left_frame.pack(side="left", padx=10)
+        
+        version_label = ctk.CTkLabel(
+            left_frame,
+            text="🚀 TimeTrackerT2 Pro v2.0 | Sistema Avanzato di Gestione Studio",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            text_color=("#4f46e5", "#8b5cf6")
+        )
+        version_label.pack(pady=5)
+        
+        # Frame centro - Status
+        center_frame = ctk.CTkFrame(glass_container, fg_color="transparent") 
+        center_frame.pack(side="left", expand=True, padx=20)
+        
+        status_label = ctk.CTkLabel(
+            center_frame,
+            text=f"✨ Utente Attivo: {self.current_user} | 📊 Sistema Note Argomenti Attivo",
+            font=ctk.CTkFont(size=12),
+            text_color=("#6b7280", "#9ca3af")
+        )
+        status_label.pack(pady=5)
+        
+        # Frame destra - Info addizionali
+        right_frame = ctk.CTkFrame(glass_container, fg_color="transparent")
+        right_frame.pack(side="right", padx=10)
+        
+        info_label = ctk.CTkLabel(
+            right_frame,
+            text="💡 Aero UI Design | ⚡ Performance Optimized",
+            font=ctk.CTkFont(size=12),
+            text_color=("#059669", "#10b981")
+        )
+        info_label.pack(pady=5)
 
     def check_portable_mode(self):
         """Verifica modalità portable"""
@@ -337,6 +445,17 @@ class TimeTrackerApp(ctk.CTk):
         except Exception as e:
             messagebox.showerror("Errore Obiettivi", f"Errore apertura obiettivi: {e}")
 
+    def show_notes(self):
+        """Mostra finestra Registro Argomenti"""
+        try:
+            from gui_windows import NotesWindow
+            notes_window = NotesWindow(self)
+        except Exception as e:
+            messagebox.showerror("Errore Registro Argomenti", f"Errore apertura registro: {e}")
+            print(f"Traceback completo: {e}")
+            import traceback
+            traceback.print_exc()
+        
     def show_settings(self):
         """Mostra impostazioni - WIP"""
         messagebox.showinfo("Impostazioni - WIP", "Funzionalita' in sviluppo!\nSarai tu a implementarla!")

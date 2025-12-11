@@ -1,5 +1,5 @@
 """
-Finestre secondarie per TimeTrackerT GUI
+Finestre secondarie per TimeTrackerT GUI - Design Aero Moderno
 Include: NewSessionWindow, SessionHistoryWindow, SubjectManagementWindow, TimerWindow
 """
 
@@ -17,14 +17,108 @@ import dataM
 # import user # Rimosso - ora gestito da user_manager
 from gui_utils import StatsCalculator, UIHelpers, DataValidator
 
+
+class AeroStyleMixin:
+    """Mixin class per stili Aero consistenti"""
+    
+    @staticmethod
+    def get_aero_colors():
+        """Ritorna palette colori Aero standard"""
+        return {
+            'primary_blue': ("#2563eb", "#1d4ed8"),
+            'success_green': ("#059669", "#047857"),
+            'danger_red': ("#dc2626", "#b91c1c"),
+            'warning_orange': ("#d97706", "#b45309"),
+            'purple_creative': ("#7c3aed", "#6d28d9"),
+            'pink_analytics': ("#be185d", "#a21caf"),
+            'cyan_academic': ("#0891b2", "#0e7490"),
+            'teal_user': ("#0d9488", "#0f766e"),
+            'gray_neutral': ("#6b7280", "#4b5563"),
+            'glass_bg': ("#f8fafc", "#334155"),
+            'card_bg': ("#ffffff", "#1e293b"),
+            'border_light': ("#e2e8f0", "#475569"),
+            'text_primary': ("#1f2937", "#f8fafc"),
+            'text_secondary': ("#6b7280", "#9ca3af")
+        }
+    
+    @staticmethod
+    def create_aero_header(parent, title, icon="🎯", color_key="primary_blue"):
+        """Crea header Aero standardizzato"""
+        colors = AeroStyleMixin.get_aero_colors()
+        
+        header_frame = ctk.CTkFrame(
+            parent,
+            corner_radius=16,
+            height=80,
+            fg_color=colors[color_key],
+            border_width=2,
+            border_color=colors['border_light']
+        )
+        header_frame.pack(fill="x", padx=20, pady=(20, 10))
+        header_frame.pack_propagate(False)
+        
+        title_label = ctk.CTkLabel(
+            header_frame,
+            text=f"{icon} {title}",
+            font=ctk.CTkFont(size=28, weight="bold"),
+            text_color=("#ffffff", "#f8fafc")
+        )
+        title_label.pack(expand=True)
+        
+        return header_frame
+    
+    @staticmethod
+    def create_aero_card(parent, title, icon="📋", color_key="glass_bg", width=None):
+        """Crea card Aero standardizzata"""
+        colors = AeroStyleMixin.get_aero_colors()
+        
+        card_frame = ctk.CTkFrame(
+            parent,
+            corner_radius=16,
+            fg_color=colors['card_bg'],
+            border_width=2,
+            border_color=colors[color_key],
+            width=width
+        )
+        if width:
+            card_frame.pack_propagate(False)
+        
+        # Header della card
+        card_header = ctk.CTkFrame(
+            card_frame,
+            corner_radius=12,
+            height=50,
+            fg_color=colors[color_key],
+            border_width=0
+        )
+        card_header.pack(fill="x", padx=15, pady=(15, 10))
+        card_header.pack_propagate(False)
+        
+        header_title = ctk.CTkLabel(
+            card_header,
+            text=f"{icon} {title}",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color=("#ffffff", "#f8fafc")
+        )
+        header_title.pack(expand=True)
+        
+        # Content area
+        content_frame = ctk.CTkFrame(card_frame, fg_color="transparent")
+        content_frame.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+        
+        return card_frame, content_frame
+
 class NewSessionWindow:
     def __init__(self, main_app):
         self.main_app = main_app
         self.window = ctk.CTkToplevel(main_app)
-        self.window.title("🎆 Nuova Sessione")
-        self.window.geometry("600x550")
+        self.window.title("� Nuova Sessione di Studio")
+        self.window.geometry("700x650")
         self.window.resizable(True, True)
-        self.window.minsize(550, 500)
+        self.window.minsize(650, 600)
+        
+        # Styling Aero coerente
+        self.setup_aero_styling()
         
         # Configura griglia per ridimensionamento dinamico
         self.window.grid_rowconfigure(0, weight=1)
@@ -50,136 +144,305 @@ class NewSessionWindow:
         self.window.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
 
     def setup_ui(self):
-        """Configura l'interfaccia della finestra"""
+        """Configura l'interfaccia con design Aero moderno e scrollabile"""
         
-        # Frame principale - Design moderno
+        # Frame principale con gradient Aero
         main_frame = ctk.CTkFrame(
             self.window, 
-            corner_radius=15,
-            fg_color=("#0e1621", "#0e1621"),
-            border_width=1,
-            border_color=("#1a1a2e", "#1a1a2e")
+            corner_radius=20,
+            fg_color=("#f8fafc", "#1e293b"),
+            border_width=2,
+            border_color=("#e2e8f0", "#475569")
         )
-        main_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
-        main_frame.grid_rowconfigure(6, weight=1)
+        main_frame.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
+        main_frame.grid_rowconfigure(1, weight=1)
         main_frame.grid_columnconfigure(0, weight=1)
         
-        # Titolo
-        title_label = ctk.CTkLabel(
+        # Header con titolo glass effect
+        header_frame = ctk.CTkFrame(
             main_frame,
-            text="Nuova Sessione di Studio",
-            font=ctk.CTkFont(size=24, weight="bold")
+            corner_radius=16,
+            height=80,
+            fg_color=("#e3f2fd", "#263238"),
+            border_width=1,
+            border_color=("#90caf9", "#455a64")
         )
-        title_label.pack(pady=(20, 30))
+        header_frame.grid(row=0, column=0, sticky="ew", padx=20, pady=(20, 10))
+        header_frame.grid_propagate(False)
         
-        # Frame per la selezione materia
-        subject_frame = ctk.CTkFrame(main_frame, corner_radius=10)
-        subject_frame.pack(fill="x", padx=20, pady=10)
-        
-        subject_label = ctk.CTkLabel(
-            subject_frame,
-            text="📚 Seleziona Materia:",
-            font=ctk.CTkFont(size=16, weight="bold")
+        title_label = ctk.CTkLabel(
+            header_frame,
+            text="🎯 Nuova Sessione di Studio",
+            font=ctk.CTkFont(size=28, weight="bold"),
+            text_color=("#1565c0", "#42a5f5")
         )
-        subject_label.pack(pady=(15, 5))
+        title_label.pack(expand=True)
         
-        # Carica le materie dell'utente
+        # Scrollable frame per contenuto
+        scroll_frame = ctk.CTkScrollableFrame(
+            main_frame,
+            corner_radius=16,
+            fg_color=("#ffffff", "#1e293b"),
+            scrollbar_fg_color=("#e2e8f0", "#475569")
+        )
+        scroll_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
+        scroll_frame.grid_columnconfigure(0, weight=1)
+        
+        # === CARD SELEZIONE MATERIA ===
+        self.create_subject_card(scroll_frame)
+        
+        # === CARD DURATA ===
+        self.create_duration_card(scroll_frame)
+        
+        # === CARD NOTE ARGOMENTO ===
+        self.create_notes_card(scroll_frame)
+        
+        # === CARD AZIONI ===
+        self.create_action_card(scroll_frame)
+    
+    def create_subject_card(self, parent):
+        """Crea card per selezione materia con design Aero"""
+        card_frame = ctk.CTkFrame(
+            parent,
+            corner_radius=16,
+            fg_color=("#ffffff", "#1e293b"),
+            border_width=2,
+            border_color=("#3b82f6", "#60a5fa")
+        )
+        card_frame.pack(fill="x", pady=15, padx=10)
+        
+        # Header card
+        header = ctk.CTkFrame(
+            card_frame,
+            corner_radius=12,
+            height=50,
+            fg_color=("#3b82f6", "#1d4ed8"),
+            border_width=0
+        )
+        header.pack(fill="x", padx=15, pady=(15, 10))
+        header.pack_propagate(False)
+        
+        title = ctk.CTkLabel(
+            header,
+            text="📚 Materia di Studio",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color=("#ffffff", "#f8fafc")
+        )
+        title.pack(expand=True)
+        
+        # Content
+        content = ctk.CTkFrame(card_frame, fg_color="transparent")
+        content.pack(fill="x", padx=20, pady=(0, 20))
+        
+        # Carica materie
         self.load_subjects()
         
         self.subject_combo = ctk.CTkComboBox(
-            subject_frame,
+            content,
             values=self.subjects_list,
-            font=ctk.CTkFont(size=14),
-            width=300,
-            height=35
+            font=ctk.CTkFont(size=16),
+            width=400,
+            height=40,
+            corner_radius=12,
+            border_width=2,
+            border_color=("#e2e8f0", "#475569")
         )
-        self.subject_combo.pack(pady=(5, 15))
+        self.subject_combo.pack(pady=10)
         
         if self.subjects_list:
             self.subject_combo.set(self.subjects_list[0])
-        
-        # Frame per la durata
-        duration_frame = ctk.CTkFrame(main_frame, corner_radius=10)
-        duration_frame.pack(fill="x", padx=20, pady=10)
-        
-        duration_label = ctk.CTkLabel(
-            duration_frame,
-            text="Durata (minuti):",
-            font=ctk.CTkFont(size=16, weight="bold")
+    
+    def create_duration_card(self, parent):
+        """Crea card per durata con presets Aero"""
+        card_frame = ctk.CTkFrame(
+            parent,
+            corner_radius=16,
+            fg_color=("#ffffff", "#1e293b"),
+            border_width=2,
+            border_color=("#059669", "#10b981")
         )
-        duration_label.pack(pady=(15, 5))
+        card_frame.pack(fill="x", pady=15, padx=10)
         
-        # Entry per la durata
+        # Header card
+        header = ctk.CTkFrame(
+            card_frame,
+            corner_radius=12,
+            height=50,
+            fg_color=("#059669", "#047857"),
+            border_width=0
+        )
+        header.pack(fill="x", padx=15, pady=(15, 10))
+        header.pack_propagate(False)
+        
+        title = ctk.CTkLabel(
+            header,
+            text="⏱️ Durata Sessione",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color=("#ffffff", "#f0fdfa")
+        )
+        title.pack(expand=True)
+        
+        # Content
+        content = ctk.CTkFrame(card_frame, fg_color="transparent")
+        content.pack(fill="x", padx=20, pady=(0, 20))
+        
+        # Entry durata
         self.duration_entry = ctk.CTkEntry(
-            duration_frame,
-            placeholder_text="es. 25, 45, 60...",
-            font=ctk.CTkFont(size=14),
+            content,
+            placeholder_text="Inserisci durata in minuti",
+            font=ctk.CTkFont(size=16),
             width=300,
-            height=35,
-            justify="center"
+            height=40,
+            justify="center",
+            corner_radius=12,
+            border_width=2
         )
-        self.duration_entry.pack(pady=(5, 10))
+        self.duration_entry.pack(pady=10)
         
-        # Pulsanti preset durata
-        preset_frame = ctk.CTkFrame(duration_frame, fg_color="transparent")
-        preset_frame.pack(pady=(0, 15))
+        # Preset buttons con design pills
+        preset_label = ctk.CTkLabel(
+            content,
+            text="Durate rapide:",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            text_color=("#6b7280", "#9ca3af")
+        )
+        preset_label.pack(pady=(10, 5))
         
-        durations = [15, 25, 45, 60, 90]
-        for duration in durations:
+        preset_frame = ctk.CTkFrame(content, fg_color="transparent")
+        preset_frame.pack(pady=(0, 10))
+        
+        durations = [15, 25, 30, 45, 60, 90]
+        colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6"]
+        
+        for i, duration in enumerate(durations):
             btn = ctk.CTkButton(
                 preset_frame,
-                text=f"{duration}m",
-                width=50,
-                height=25,
-                command=lambda d=duration: self.set_duration(d),
-                font=ctk.CTkFont(size=12)
+                text=f"{duration}min",
+                width=70,
+                height=35,
+                corner_radius=18,
+                font=ctk.CTkFont(size=14, weight="bold"),
+                fg_color=colors[i % len(colors)],
+                hover_color=colors[i % len(colors)],
+                command=lambda d=duration: self.set_duration(d)
             )
             btn.pack(side="left", padx=5)
-        
-        # Frame per i pulsanti
-        button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        button_frame.pack(fill="x", padx=20, pady=(20, 10))
-        
-        # Pulsante Avvia Timer - Design elegante
-        self.start_timer_btn = ctk.CTkButton(
-            button_frame,
-            text="Avvia con Timer",
-            font=ctk.CTkFont(size=16, weight="bold"),
-            command=self.start_with_timer,
-            height=40,
-            width=160,
-            fg_color=("#c2410c", "#ea580c"),
-            hover_color=("#ea580c", "#f97316"),
-            border_width=1,
-            border_color=("#f97316", "#fb923c")
+    
+    def create_notes_card(self, parent):
+        """Crea card per note argomento opzionali"""
+        card_frame = ctk.CTkFrame(
+            parent,
+            corner_radius=16,
+            fg_color=("#ffffff", "#1e293b"),
+            border_width=2,
+            border_color=("#7c3aed", "#a78bfa")
         )
-        self.start_timer_btn.pack(side="left", padx=(0, 10))
+        card_frame.pack(fill="x", pady=15, padx=10)
         
-        # Pulsante Sessione Manuale
-        self.start_btn = ctk.CTkButton(
-            button_frame,
-            text="📝 Sessione Manuale",
-            font=ctk.CTkFont(size=16, weight="bold"),
-            command=self.start_manual_session,
-            height=40,
-            width=160,
-            fg_color=("#166534", "#16a34a"),
-            hover_color=("#15803d", "#22c55e"),
-            border_width=1,
-            border_color=("#22c55e", "#4ade80")
+        # Header card
+        header = ctk.CTkFrame(
+            card_frame,
+            corner_radius=12,
+            height=50,
+            fg_color=("#7c3aed", "#6d28d9"),
+            border_width=0
         )
-        self.start_btn.pack(side="left", padx=(0, 10))
+        header.pack(fill="x", padx=15, pady=(15, 10))
+        header.pack_propagate(False)
         
-        # Pulsante Annulla
+        title = ctk.CTkLabel(
+            header,
+            text="📝 Argomento di Studio (Opzionale)",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color=("#ffffff", "#faf5ff")
+        )
+        title.pack(expand=True)
+        
+        # Content
+        content = ctk.CTkFrame(card_frame, fg_color="transparent")
+        content.pack(fill="x", padx=20, pady=(0, 20))
+        
+        # Helper text
+        helper = ctk.CTkLabel(
+            content,
+            text="💡 Specifica l'argomento per tracciare il tempo dedicato",
+            font=ctk.CTkFont(size=12),
+            text_color=("#6b7280", "#9ca3af")
+        )
+        helper.pack(pady=(5, 10))
+        
+        # Entry per note
+        self.notes_entry = ctk.CTkEntry(
+            content,
+            placeholder_text="es. Capitolo 3 - Basi di Dati, Derivate parziali, etc.",
+            font=ctk.CTkFont(size=16),
+            width=500,
+            height=40,
+            corner_radius=12,
+            border_width=2
+        )
+        self.notes_entry.pack(pady=5)
+    
+    def create_action_card(self, parent):
+        """Crea card azioni con pulsanti Aero"""
+        card_frame = ctk.CTkFrame(
+            parent,
+            corner_radius=16,
+            fg_color=("#f8fafc", "#1e293b"),
+            border_width=2,
+            border_color=("#e2e8f0", "#475569")
+        )
+        card_frame.pack(fill="x", pady=15, padx=10)
+        
+        # Content con pulsanti
+        content = ctk.CTkFrame(card_frame, fg_color="transparent")
+        content.pack(fill="both", expand=True, padx=25, pady=25)
+        
+        # Pulsante principale - Avvia Sessione
+        self.start_session_btn = ctk.CTkButton(
+            content,
+            text="🚀 Avvia Sessione",
+            font=ctk.CTkFont(size=20, weight="bold"),
+            width=300,
+            height=60,
+            corner_radius=30,
+            fg_color=("#2563eb", "#1d4ed8"),
+            hover_color=("#1d4ed8", "#2563eb"),
+            border_width=3,
+            border_color=("#60a5fa", "#93c5fd"),
+            command=self.start_session
+        )
+        self.start_session_btn.pack(pady=(0, 15))
+        
+        # Pulsanti secondari in riga
+        secondary_frame = ctk.CTkFrame(content, fg_color="transparent")
+        secondary_frame.pack(fill="x", pady=(0, 10))
+        
+        # Timer mode
+        self.timer_btn = ctk.CTkButton(
+            secondary_frame,
+            text="⏲️ Con Timer",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            width=140,
+            height=45,
+            corner_radius=22,
+            fg_color=("#dc2626", "#b91c1c"),
+            hover_color=("#b91c1c", "#dc2626"),
+            command=self.start_with_timer
+        )
+        self.timer_btn.pack(side="left", padx=(0, 10))
+        
+        # Annulla
         cancel_btn = ctk.CTkButton(
-            button_frame,
+            secondary_frame,
             text="❌ Annulla",
             font=ctk.CTkFont(size=16, weight="bold"),
-            command=self.window.destroy,
-            height=40,
-            width=150,
-            fg_color="transparent",
-            border_width=2
+            width=140,
+            height=45,
+            corner_radius=22,
+            fg_color=("#6b7280", "#4b5563"),
+            hover_color=("#4b5563", "#6b7280"),
+            command=self.safe_close
         )
         cancel_btn.pack(side="right")
 
@@ -236,6 +499,7 @@ class NewSessionWindow:
         """Salva una sessione completata manualmente"""
         subject = self.subject_combo.get()
         duration_text = self.duration_entry.get().strip()
+        note_text = self.notes_entry.get().strip()
         
         # Validazione input
         if not subject or subject == "Nessuna materia disponibile":
@@ -256,17 +520,20 @@ class NewSessionWindow:
         
         # Salva sessione manuale
         try:
-            success = dataM.save_session(self.main_app.current_user, subject, duration)
+            success = dataM.save_session(self.main_app.current_user, subject, duration, note_text)
             
             if success:
-                messagebox.showinfo("Successo", f"Sessione manuale salvata!\n\nMateria: {subject}\nDurata: {duration} minuti")
+                success_msg = f"Sessione manuale salvata!\n\nMateria: {subject}\nDurata: {duration} minuti"
+                if note_text:
+                    success_msg += f"\nArgomento: {note_text}"
+                messagebox.showinfo("Successo", success_msg)
                 self.window.destroy()
             else:
-                messagebox.showerror("Errore", "❌ Errore nel salvataggio della sessione!")
+                messagebox.showerror("Errore", "Errore nel salvataggio della sessione!")
                 
         except Exception as e:
             print(f"Errore sessione manuale: {e}")
-            messagebox.showerror("Errore", f"❌ Errore nel salvataggio!\n\nDettagli: {e}")
+            messagebox.showerror("Errore", f"Errore nel salvataggio!\n\nDettagli: {e}")
             
     def start_manual_session(self):
         """Avvia sessione manuale (salva direttamente)"""
@@ -283,10 +550,13 @@ class SessionHistoryWindow:
     def __init__(self, main_app):
         self.main_app = main_app
         self.window = ctk.CTkToplevel(main_app)
-        self.window.title("📈 Storico Sessioni")
-        self.window.geometry("850x650")
+        self.window.title("� Storico Sessioni di Studio")
+        self.window.geometry("1000x750")
         self.window.resizable(True, True)
-        self.window.minsize(700, 550)
+        self.window.minsize(900, 650)
+        
+        # Setup stile Aero
+        self.setup_aero_styling()
         
         # Configura griglia per ridimensionamento dinamico
         self.window.grid_rowconfigure(0, weight=1)
@@ -301,6 +571,18 @@ class SessionHistoryWindow:
         self.setup_ui()
         self.center_window()
         self.load_sessions()
+    
+    def setup_aero_styling(self):
+        """Configura stile Aero coerente"""
+        self.colors = {
+            'primary': ("#059669", "#047857"),
+            'secondary': ("#f8fafc", "#334155"), 
+            'accent': ("#10b981", "#34d399"),
+            'card_bg': ("#ffffff", "#1e293b"),
+            'header_bg': ("#e6fffa", "#0f2027"),
+            'text_primary': ("#1f2937", "#f8fafc"),
+            'text_secondary': ("#6b7280", "#9ca3af")
+        }
 
     def center_window(self):
         """Centra la finestra"""
@@ -878,19 +1160,25 @@ class TimerWindow:
             if effective_duration < 1:
                 effective_duration = 1  # Minimo 1 minuto
             
-            success = dataM.save_session(self.main_app.current_user, self.subject, effective_duration)
+            # Mostra finestra per aggiungere nota argomento
+            note_dialog = NoteDialog(self.window, self.subject, effective_duration)
+            self.window.wait_window(note_dialog.dialog)
+            
+            note_text = note_dialog.note_text if hasattr(note_dialog, 'note_text') else ""
+            
+            success = dataM.save_session(self.main_app.current_user, self.subject, effective_duration, note_text)
             
             if success:
-                messagebox.showinfo(
-                    "Sessione Completata", 
-                    f"Sessione salvata con successo!\n\nMateria: {self.subject}\nDurata: {effective_duration} minuti"
-                )
+                success_msg = f"Sessione salvata con successo!\n\nMateria: {self.subject}\nDurata: {effective_duration} minuti"
+                if note_text:
+                    success_msg += f"\nArgomento: {note_text}"
+                messagebox.showinfo("Sessione Completata", success_msg)
             else:
-                messagebox.showerror("Errore", "❌ Errore nel salvataggio della sessione!")
+                messagebox.showerror("Errore", "Errore nel salvataggio della sessione!")
                 
         except Exception as e:
             print(f"Errore nel salvataggio: {e}")
-            messagebox.showerror("Errore", f"❌ Errore nel salvataggio della sessione!\n\nDettagli: {e}")
+            messagebox.showerror("Errore", f"Errore nel salvataggio della sessione!\n\nDettagli: {e}")
             
     def on_timer_close(self):
         """Gestisce chiusura timer con conferma se attivo"""
@@ -2080,3 +2368,720 @@ class GoalsWindow:
             
         except Exception as e:
             print(f"Errore controllo completamenti: {e}")
+
+
+class NoteDialog:
+    """Finestra di dialogo per inserire note argomento a fine sessione"""
+    
+    def __init__(self, parent, materia, durata_minuti):
+        self.materia = materia
+        self.durata_minuti = durata_minuti
+        self.note_text = ""
+        
+        # Crea finestra dialogo
+        self.dialog = ctk.CTkToplevel(parent)
+        self.dialog.title("Aggiungi Nota Argomento")
+        self.dialog.geometry("500x350")
+        self.dialog.resizable(False, False)
+        
+        # Centra la finestra
+        self.dialog.transient(parent)
+        self.dialog.grab_set()
+        
+        self.setup_ui()
+        
+        # Focus sul campo testo
+        self.note_entry.focus_set()
+    
+    def setup_ui(self):
+        """Crea l'interfaccia del dialogo"""
+        
+        # Frame principale
+        main_frame = ctk.CTkFrame(self.dialog)
+        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        # Titolo
+        title_label = ctk.CTkLabel(
+            main_frame,
+            text="Sessione Completata!",
+            font=ctk.CTkFont(size=20, weight="bold")
+        )
+        title_label.pack(pady=(20, 10))
+        
+        # Info sessione
+        info_label = ctk.CTkLabel(
+            main_frame,
+            text=f"Materia: {self.materia}\nDurata: {self.durata_minuti} minuti",
+            font=ctk.CTkFont(size=14)
+        )
+        info_label.pack(pady=(0, 20))
+        
+        # Separatore
+        separator = ctk.CTkFrame(main_frame, height=2)
+        separator.pack(fill="x", pady=10)
+        
+        # Label per nota
+        note_label = ctk.CTkLabel(
+            main_frame,
+            text="Vuoi aggiungere una nota sull'argomento studiato?",
+            font=ctk.CTkFont(size=14, weight="bold")
+        )
+        note_label.pack(pady=(10, 5))
+        
+        help_label = ctk.CTkLabel(
+            main_frame,
+            text="(es. Capitolo 5 - Normalizzazione database)",
+            font=ctk.CTkFont(size=12),
+            text_color="gray"
+        )
+        help_label.pack(pady=(0, 10))
+        
+        # Campo testo per nota
+        self.note_entry = ctk.CTkEntry(
+            main_frame,
+            placeholder_text="Inserisci argomento studiato (opzionale)...",
+            font=ctk.CTkFont(size=14),
+            width=400,
+            height=40
+        )
+        self.note_entry.pack(pady=(0, 20))
+        
+        # Bind Enter per salvare
+        self.note_entry.bind('<Return>', lambda e: self.save_note())
+        
+        # Frame pulsanti
+        button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        button_frame.pack(pady=(10, 20))
+        
+        # Pulsante Salva con nota
+        save_btn = ctk.CTkButton(
+            button_frame,
+            text="Salva con Nota",
+            command=self.save_note,
+            height=35,
+            width=140,
+            fg_color=("#2d5aa0", "#3b82f6"),
+            hover_color=("#1e40af", "#60a5fa")
+        )
+        save_btn.pack(side="left", padx=(0, 10))
+        
+        # Pulsante Salta nota
+        skip_btn = ctk.CTkButton(
+            button_frame,
+            text="Salta Nota",
+            command=self.skip_note,
+            height=35,
+            width=140,
+            fg_color=("#6b7280", "#9ca3af"),
+            hover_color=("#9ca3af", "#d1d5db")
+        )
+        skip_btn.pack(side="left")
+    
+    def save_note(self):
+        """Salva la nota e chiude il dialogo"""
+        self.note_text = self.note_entry.get().strip()
+        self.dialog.destroy()
+    
+    def skip_note(self):
+        """Salta la nota (salva vuota) e chiude il dialogo"""
+        self.note_text = ""
+        self.dialog.destroy()
+
+
+class NotesWindow:
+    """Finestra per visualizzare timeline argomenti e gestione note di progresso"""
+    
+    def __init__(self, main_app):
+        self.main_app = main_app
+        self.current_user = main_app.current_user
+        
+        # Inizializza il gestore note
+        try:
+            from progress_manager import ProgressManager
+            self.progress_manager = ProgressManager()
+            
+            self.setup_window()
+            self.create_widgets()
+            self.load_notes()
+            
+            # Assicurati che la finestra sia visibile
+            self.window.lift()
+            self.window.focus_force()
+            
+        except Exception as e:
+            print(f"ERRORE NOTES: {e}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Errore", f"Errore inizializzazione note: {e}")
+            self.create_error_window(e)
+    
+    def create_error_window(self, error):
+        """Crea una finestra di errore quando le note non possono essere caricate"""
+        self.window = ctk.CTkToplevel(self.main_app)
+        self.window.title("Errore Note")
+        self.window.geometry("500x300")
+        
+        error_label = ctk.CTkLabel(
+            self.window,
+            text=f"Impossibile caricare le Note:\\n{str(error)}",
+            font=ctk.CTkFont(size=14),
+            wraplength=450
+        )
+        error_label.pack(expand=True, padx=20, pady=20)
+        
+        close_btn = ctk.CTkButton(
+            self.window,
+            text="Chiudi",
+            command=self.window.destroy
+        )
+        close_btn.pack(pady=10)
+    
+    def setup_window(self):
+        """Configura la finestra principale con design Aero"""
+        self.window = ctk.CTkToplevel(self.main_app)
+        self.window.title("📝 Registro Argomenti - TimeTrackerT2 Pro")
+        self.window.geometry("1200x800")
+        self.window.resizable(True, True)
+        self.window.minsize(1000, 700)
+        
+        # Stile Aero
+        self.colors = {
+            'primary': ("#7c3aed", "#6d28d9"),
+            'secondary': ("#f8fafc", "#334155"),
+            'accent': ("#a78bfa", "#c4b5fd"),
+            'card_bg': ("#ffffff", "#1e293b"),
+            'glass_bg': ("#faf5ff", "#1e1b2e")
+        }
+        
+        # Configura il grid
+        self.window.grid_rowconfigure(1, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
+        
+        # Rende la finestra modale
+        self.window.transient(self.main_app)
+        self.window.grab_set()
+    
+    def create_widgets(self):
+        """Crea i widget dell'interfaccia"""
+        
+        # Frame del titolo e controlli
+        title_frame = ctk.CTkFrame(self.window)
+        title_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+        
+        title_label = ctk.CTkLabel(
+            title_frame,
+            text=f"Registro Argomenti - {self.current_user}",
+            font=ctk.CTkFont(size=24, weight="bold")
+        )
+        title_label.pack(side="left", pady=15, padx=20)
+        
+        # Frame controlli filtri
+        controls_frame = ctk.CTkFrame(title_frame, fg_color="transparent")
+        controls_frame.pack(side="right", padx=20)
+        
+        # Filtro per materia
+        filter_label = ctk.CTkLabel(controls_frame, text="Filtra per materia:")
+        filter_label.pack(side="left", padx=(0, 10))
+        
+        # Carica materie per filtro
+        self.load_subjects()
+        filter_options = ["Tutte le materie"] + self.subjects_list
+        
+        self.filter_var = ctk.StringVar(value="Tutte le materie")
+        self.filter_combo = ctk.CTkComboBox(
+            controls_frame,
+            variable=self.filter_var,
+            values=filter_options,
+            command=self.on_filter_change,
+            width=200
+        )
+        self.filter_combo.pack(side="left", padx=(0, 10))
+        
+        # Pulsante aggiungi milestone
+        add_btn = ctk.CTkButton(
+            controls_frame,
+            text="+ Milestone",
+            command=self.show_add_milestone,
+            height=30,
+            width=100,
+            fg_color=("#2d5aa0", "#3b82f6"),
+            hover_color=("#1e40af", "#60a5fa")
+        )
+        add_btn.pack(side="left")
+        
+        # Frame principale contenuto
+        main_frame = ctk.CTkFrame(self.window)
+        main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
+        main_frame.grid_rowconfigure(0, weight=1)
+        main_frame.grid_columnconfigure(1, weight=1)
+        
+        # Sidebar statistiche
+        self.create_stats_sidebar(main_frame)
+        
+        # Area timeline note
+        self.create_timeline_area(main_frame)
+    
+    def load_subjects(self):
+        """Carica la lista delle materie disponibili"""
+        try:
+            subjects_data = dataM.load_subjects(self.current_user)
+            if isinstance(subjects_data, dict):
+                if self.current_user in subjects_data:
+                    self.subjects_list = subjects_data[self.current_user]
+                else:
+                    self.subjects_list = list(subjects_data.keys()) if subjects_data else []
+            elif isinstance(subjects_data, list):
+                self.subjects_list = subjects_data
+            else:
+                self.subjects_list = []
+        except Exception as e:
+            print(f"Errore caricamento materie: {e}")
+            self.subjects_list = []
+    
+    def create_stats_sidebar(self, parent):
+        """Crea la sidebar con le statistiche"""
+        stats_frame = ctk.CTkScrollableFrame(parent, width=280, label_text="Statistiche Argomenti")
+        stats_frame.grid(row=0, column=0, sticky="ns", padx=(0, 10), pady=10)
+        
+        self.stats_container = stats_frame
+        
+        # Le statistiche verranno caricate dinamicamente
+        
+    def create_timeline_area(self, parent):
+        """Crea l'area timeline per visualizzare le note"""
+        timeline_frame = ctk.CTkScrollableFrame(parent, label_text="Timeline Argomenti")
+        timeline_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        
+        self.timeline_container = timeline_frame
+        
+        # Messaggio iniziale (verrà sostituito dalla timeline)
+        self.no_notes_label = ctk.CTkLabel(
+            self.timeline_container,
+            text="Nessuna nota argomento ancora.\\nCompleta delle sessioni con note per vederle qui!",
+            font=ctk.CTkFont(size=16),
+            text_color="gray"
+        )
+        self.no_notes_label.pack(pady=50)
+    
+    def load_notes(self):
+        """Carica e visualizza tutte le note dell'utente"""
+        try:
+            # Determina materia filtro
+            selected_filter = self.filter_var.get()
+            materia_filter = None if selected_filter == "Tutte le materie" else selected_filter
+            
+            # Carica le note
+            notes = self.progress_manager.get_user_notes(self.current_user, materia_filter)
+            
+            # Aggiorna timeline
+            self.update_timeline(notes)
+            
+            # Aggiorna statistiche
+            self.update_stats(materia_filter)
+            
+        except Exception as e:
+            print(f"Errore caricamento note: {e}")
+            error_label = ctk.CTkLabel(
+                self.timeline_container,
+                text=f"Errore nel caricamento:\\n{str(e)}",
+                font=ctk.CTkFont(size=14),
+                text_color="red"
+            )
+            error_label.pack(pady=20)
+    
+    def update_timeline(self, notes):
+        """Aggiorna la visualizzazione della timeline"""
+        # Pulisce il contenitore
+        for widget in self.timeline_container.winfo_children():
+            widget.destroy()
+        
+        if not notes:
+            self.no_notes_label = ctk.CTkLabel(
+                self.timeline_container,
+                text="Nessuna nota per il filtro selezionato.\\nProva a cambiare il filtro o aggiungi nuove note!",
+                font=ctk.CTkFont(size=16),
+                text_color="gray"
+            )
+            self.no_notes_label.pack(pady=50)
+            return
+        
+        # Crea widget per ogni nota
+        for note in notes:
+            self.create_note_widget(note)
+    
+    def create_note_widget(self, note):
+        """Crea un widget per visualizzare una singola nota"""
+        try:
+            # Frame principale per la nota
+            note_frame = ctk.CTkFrame(
+                self.timeline_container,
+                corner_radius=10,
+                border_width=1,
+                border_color=("#3b82f6" if note.get('tipo') == 'milestone' else "#6b7280")
+            )
+            note_frame.pack(fill="x", padx=10, pady=8)
+            
+            # Header con materia e timestamp
+            header_frame = ctk.CTkFrame(note_frame, fg_color="transparent")
+            header_frame.pack(fill="x", padx=15, pady=(15, 5))
+            
+            # Materia e tipo
+            tipo_icon = "🏆" if note.get('tipo') == 'milestone' else "📝"
+            materia_text = f"{tipo_icon} {note['materia']}"
+            
+            materia_label = ctk.CTkLabel(
+                header_frame,
+                text=materia_text,
+                font=ctk.CTkFont(size=16, weight="bold")
+            )
+            materia_label.pack(side="left")
+            
+            # Timestamp
+            try:
+                from datetime import datetime
+                timestamp = datetime.fromisoformat(note.get('timestamp', ''))
+                time_str = timestamp.strftime("%d/%m/%Y %H:%M")
+            except:
+                time_str = note.get('timestamp', 'N/A')
+            
+            time_label = ctk.CTkLabel(
+                header_frame,
+                text=time_str,
+                font=ctk.CTkFont(size=12),
+                text_color="gray"
+            )
+            time_label.pack(side="right")
+            
+            # Argomento
+            argomento_frame = ctk.CTkFrame(note_frame, fg_color="transparent")
+            argomento_frame.pack(fill="x", padx=15, pady=5)
+            
+            argomento_label = ctk.CTkLabel(
+                argomento_frame,
+                text=f"Argomento: {note.get('argomento', 'N/A')}",
+                font=ctk.CTkFont(size=14, weight="bold"),
+                anchor="w"
+            )
+            argomento_label.pack(fill="x")
+            
+            # Descrizione (se milestone)
+            if note.get('tipo') == 'milestone' and note.get('descrizione'):
+                desc_label = ctk.CTkLabel(
+                    argomento_frame,
+                    text=f"Dettagli: {note['descrizione']}",
+                    font=ctk.CTkFont(size=12),
+                    text_color="gray",
+                    anchor="w",
+                    wraplength=500
+                )
+                desc_label.pack(fill="x", pady=(5, 0))
+            
+            # Info durata e ore totali
+            info_frame = ctk.CTkFrame(note_frame, fg_color="transparent")
+            info_frame.pack(fill="x", padx=15, pady=5)
+            
+            if note.get('tipo') == 'sessione':
+                durata_text = f"Durata sessione: {note.get('durata_sessione', 0)} min"
+            else:
+                durata_text = "Milestone completata"
+            
+            durata_label = ctk.CTkLabel(
+                info_frame,
+                text=durata_text,
+                font=ctk.CTkFont(size=12)
+            )
+            durata_label.pack(side="left")
+            
+            ore_totali = note.get('ore_totali_materia', 0)
+            ore_text = f"Ore totali materia: {ore_totali:.1f}h"
+            
+            ore_label = ctk.CTkLabel(
+                info_frame,
+                text=ore_text,
+                font=ctk.CTkFont(size=12),
+                text_color="#3b82f6"
+            )
+            ore_label.pack(side="right")
+            
+            # Pulsante elimina (solo per l'utente)
+            delete_btn = ctk.CTkButton(
+                note_frame,
+                text="Elimina",
+                command=lambda: self.delete_note(note['id']),
+                height=25,
+                width=80,
+                fg_color="#dc3545",
+                hover_color="#c82333",
+                font=ctk.CTkFont(size=12)
+            )
+            delete_btn.pack(side="right", padx=15, pady=(0, 15))
+            
+        except Exception as e:
+            print(f"Errore creazione widget nota: {e}")
+    
+    def update_stats(self, materia_filter=None):
+        """Aggiorna le statistiche nella sidebar"""
+        try:
+            # Pulisce il contenitore statistiche
+            for widget in self.stats_container.winfo_children():
+                widget.destroy()
+            
+            if materia_filter and materia_filter in self.subjects_list:
+                # Statistiche per materia specifica
+                stats = self.progress_manager.get_subject_statistics(self.current_user, materia_filter)
+                self._create_subject_stats_widget(stats)
+            else:
+                # Statistiche generali per tutte le materie
+                self._create_general_stats_widget()
+                
+        except Exception as e:
+            print(f"Errore aggiornamento statistiche: {e}")
+    
+    def _create_subject_stats_widget(self, stats):
+        """Crea widget statistiche per materia specifica"""
+        title = ctk.CTkLabel(
+            self.stats_container,
+            text=f"Statistiche {stats['materia']}",
+            font=ctk.CTkFont(size=16, weight="bold")
+        )
+        title.pack(pady=(10, 20))
+        
+        # Statistiche principali
+        stats_text = f"""
+Ore Totali: {stats.get('ore_totali', 0)}h
+
+Sessioni Totali: {stats.get('sessioni_totali', 0)}
+
+Argomenti Studiati: {stats.get('argomenti_studiati', 0)}
+
+Milestone: {stats.get('milestone_completate', 0)}
+
+Copertura Note: {stats.get('copertura_note', 0)}%
+
+Tempo Medio/Argomento: {stats.get('tempo_medio_per_argomento', 0):.1f}h
+        """
+        
+        stats_label = ctk.CTkLabel(
+            self.stats_container,
+            text=stats_text,
+            font=ctk.CTkFont(size=12),
+            anchor="w",
+            justify="left"
+        )
+        stats_label.pack(fill="x", padx=10)
+    
+    def _create_general_stats_widget(self):
+        """Crea widget statistiche generali"""
+        title = ctk.CTkLabel(
+            self.stats_container,
+            text="Statistiche Generali",
+            font=ctk.CTkFont(size=16, weight="bold")
+        )
+        title.pack(pady=(10, 20))
+        
+        # Calcola statistiche per tutte le materie
+        all_notes = self.progress_manager.get_user_notes(self.current_user)
+        
+        total_notes = len(all_notes)
+        session_notes = len([n for n in all_notes if n.get('tipo') == 'sessione'])
+        milestone_notes = len([n for n in all_notes if n.get('tipo') == 'milestone'])
+        
+        # Materie con note
+        materie_con_note = len(set(n.get('materia', '') for n in all_notes if n.get('materia')))
+        
+        # Attività recente (ultimi 7 giorni)
+        recent_activity = self.progress_manager.get_recent_activity(self.current_user, 7)
+        
+        stats_text = f"""
+Note Totali: {total_notes}
+
+Note Sessioni: {session_notes}
+
+Milestone: {milestone_notes}
+
+Materie Attive: {materie_con_note}
+
+Attività (7 giorni): {len(recent_activity)}
+        """
+        
+        stats_label = ctk.CTkLabel(
+            self.stats_container,
+            text=stats_text,
+            font=ctk.CTkFont(size=12),
+            anchor="w",
+            justify="left"
+        )
+        stats_label.pack(fill="x", padx=10)
+    
+    def on_filter_change(self, selected_materia):
+        """Callback per cambio filtro materia"""
+        self.load_notes()
+    
+    def show_add_milestone(self):
+        """Mostra finestra per aggiungere milestone"""
+        milestone_dialog = MilestoneDialog(self.window, self.current_user, self.subjects_list)
+        self.window.wait_window(milestone_dialog.dialog)
+        
+        # Ricarica le note se è stata aggiunta una milestone
+        if hasattr(milestone_dialog, 'milestone_added') and milestone_dialog.milestone_added:
+            self.load_notes()
+    
+    def delete_note(self, note_id):
+        """Elimina una nota"""
+        try:
+            if messagebox.askyesno("Conferma", "Sei sicuro di voler eliminare questa nota?"):
+                success = self.progress_manager.delete_note(note_id)
+                if success:
+                    messagebox.showinfo("Successo", "Nota eliminata!")
+                    self.load_notes()  # Ricarica la lista
+                else:
+                    messagebox.showerror("Errore", "Errore nell'eliminazione della nota!")
+        except Exception as e:
+            messagebox.showerror("Errore", f"Errore eliminazione!\\n\\nDettagli: {e}")
+
+
+class MilestoneDialog:
+    """Finestra di dialogo per aggiungere milestone manuali"""
+    
+    def __init__(self, parent, user, subjects_list):
+        self.user = user
+        self.subjects_list = subjects_list if subjects_list else ["Nessuna materia disponibile"]
+        self.milestone_added = False
+        
+        # Crea finestra dialogo
+        self.dialog = ctk.CTkToplevel(parent)
+        self.dialog.title("Aggiungi Milestone")
+        self.dialog.geometry("500x400")
+        self.dialog.resizable(False, False)
+        
+        # Centra la finestra
+        self.dialog.transient(parent)
+        self.dialog.grab_set()
+        
+        self.setup_ui()
+        
+    def setup_ui(self):
+        """Crea l'interfaccia del dialogo milestone"""
+        
+        # Frame principale
+        main_frame = ctk.CTkFrame(self.dialog)
+        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        # Titolo
+        title_label = ctk.CTkLabel(
+            main_frame,
+            text="Aggiungi Milestone",
+            font=ctk.CTkFont(size=20, weight="bold")
+        )
+        title_label.pack(pady=(20, 10))
+        
+        help_label = ctk.CTkLabel(
+            main_frame,
+            text="Le milestone segnano traguardi importanti nel tuo apprendimento",
+            font=ctk.CTkFont(size=12),
+            text_color="gray"
+        )
+        help_label.pack(pady=(0, 20))
+        
+        # Materia
+        materia_label = ctk.CTkLabel(main_frame, text="Materia:", font=ctk.CTkFont(size=14, weight="bold"))
+        materia_label.pack(pady=(0, 5))
+        
+        self.materia_combo = ctk.CTkComboBox(
+            main_frame,
+            values=self.subjects_list,
+            width=400,
+            height=35,
+            state="readonly"
+        )
+        self.materia_combo.pack(pady=(0, 15))
+        
+        # Argomento
+        argomento_label = ctk.CTkLabel(main_frame, text="Argomento/Traguardo:", font=ctk.CTkFont(size=14, weight="bold"))
+        argomento_label.pack(pady=(0, 5))
+        
+        self.argomento_entry = ctk.CTkEntry(
+            main_frame,
+            placeholder_text="es. Completato Capitolo 3 - Database Relazionali",
+            font=ctk.CTkFont(size=14),
+            width=400,
+            height=35
+        )
+        self.argomento_entry.pack(pady=(0, 15))
+        
+        # Descrizione opzionale
+        desc_label = ctk.CTkLabel(main_frame, text="Descrizione (opzionale):", font=ctk.CTkFont(size=14, weight="bold"))
+        desc_label.pack(pady=(0, 5))
+        
+        self.desc_textbox = ctk.CTkTextbox(
+            main_frame,
+            width=400,
+            height=80,
+            font=ctk.CTkFont(size=12)
+        )
+        self.desc_textbox.pack(pady=(0, 20))
+        
+        # Frame pulsanti
+        button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        button_frame.pack(pady=(10, 20))
+        
+        # Pulsante Salva
+        save_btn = ctk.CTkButton(
+            button_frame,
+            text="Salva Milestone",
+            command=self.save_milestone,
+            height=35,
+            width=140,
+            fg_color=("#2d5aa0", "#3b82f6"),
+            hover_color=("#1e40af", "#60a5fa")
+        )
+        save_btn.pack(side="left", padx=(0, 10))
+        
+        # Pulsante Annulla
+        cancel_btn = ctk.CTkButton(
+            button_frame,
+            text="Annulla",
+            command=self.dialog.destroy,
+            height=35,
+            width=140,
+            fg_color=("#6b7280", "#9ca3af"),
+            hover_color=("#9ca3af", "#d1d5db")
+        )
+        cancel_btn.pack(side="left")
+    
+    def save_milestone(self):
+        """Salva la milestone"""
+        try:
+            # Validazioni
+            materia = self.materia_combo.get()
+            if not materia or materia == "Nessuna materia disponibile":
+                messagebox.showerror("Errore", "Seleziona una materia valida!")
+                return
+            
+            argomento = self.argomento_entry.get().strip()
+            if not argomento:
+                messagebox.showerror("Errore", "Inserisci l'argomento/traguardo!")
+                return
+            
+            descrizione = self.desc_textbox.get("1.0", "end-1c").strip()
+            
+            # Salva milestone
+            from progress_manager import ProgressManager
+            progress_manager = ProgressManager()
+            
+            success = progress_manager.add_milestone_note(
+                user=self.user,
+                materia=materia,
+                argomento=argomento,
+                descrizione=descrizione if descrizione else None
+            )
+            
+            if success:
+                self.milestone_added = True
+                messagebox.showinfo("Successo", f"Milestone salvata!\\n\\nMateria: {materia}\\nArgomento: {argomento}")
+                self.dialog.destroy()
+            else:
+                messagebox.showerror("Errore", "Errore nel salvataggio della milestone!")
+                
+        except Exception as e:
+            messagebox.showerror("Errore", f"Errore salvataggio milestone!\\n\\nDettagli: {e}")
