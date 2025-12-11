@@ -219,9 +219,8 @@ class UIHelpers:
         subject_lower = subject_name.lower()
         
         emoji_map = {
-            'matematica': '🔢', 'math': '🔢', 'algebra': '🔢', 'geometria': '📐',
-            'fisica': '⚛️', 'chimica': '🧪', 'biologia': '🧬', 'scienze': '🔬',
-            'italiano': '🇮🇹', 'inglese': '🇬🇧', 'francese': '🇫🇷', 'spagnolo': '🇪🇸',
+            'matematica': '[M]', 'fisica': '[F]', 'italiano': '[I]', 'chimica': '🧪', 'biologia': '🧬', 'scienze': '🔬',
+            'inglese': '🇬🇧', 'francese': '🇫🇷', 'spagnolo': '🇪🇸',
             'storia': '📜', 'geografia': '🗺️', 'filosofia': '🤔', 'letteratura': '📚',
             'programmazione': '💻', 'coding': '💻', 'python': '🐍', 'java': '☕',
             'web': '🌐', 'html': '📝', 'css': '🎨', 'javascript': '📜',
