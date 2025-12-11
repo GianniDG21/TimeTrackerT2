@@ -264,15 +264,15 @@ class ChartGenerator:
         ax1.axis('off')
         
         stats_text = f"""
-        📊 DASHBOARD PRODUTTIVITÀ
+        DASHBOARD PRODUTTIVITA'
         
-        📚 Sessioni Totali: {insights['total_sessions']}
-        ⏱️ Ore Totali: {insights['total_hours']:.1f}h
-        📖 Media Sessione: {insights['avg_session_length']:.1f}h
+        Sessioni Totali: {insights['total_sessions']}
+        Ore Totali: {insights['total_hours']:.1f}h
+        Media Sessione: {insights['avg_session_length']:.1f}h
         
-        🏆 Materia Top: {insights['most_studied_subject']}
-        🕒 Ora più Produttiva: {insights['most_productive_hour']}
-        📅 Giorno più Produttivo: {insights['most_productive_day']}
+        Materia Top: {insights['most_studied_subject']}
+        Ora piu' Produttiva: {insights['most_productive_hour']}
+        Giorno piu' Produttivo: {insights['most_productive_day']}
         """
         
         ax1.text(0.1, 0.5, stats_text, fontsize=14, color='white', 

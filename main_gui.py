@@ -138,7 +138,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Nuova Sessione
         self.new_session_btn = ctk.CTkButton(
             self.menu_frame,
-            text="🚀 Nuova Sessione",
+            text="Nuova Sessione",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_new_session,
             height=80,
@@ -153,7 +153,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Storico Sessioni
         self.history_btn = ctk.CTkButton(
             self.menu_frame,
-            text="📊 Storico Sessioni",
+            text="Storico Sessioni",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_session_history,
             height=80,
@@ -168,7 +168,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Timer  
         self.timer_btn = ctk.CTkButton(
             self.menu_frame,
-            text="⏱️ Cronometro",
+            text="Cronometro",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_stopwatch,
             height=80,
@@ -183,7 +183,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Gestione Materie
         self.subjects_btn = ctk.CTkButton(
             self.menu_frame,
-            text="📚 Gestione Materie",
+            text="Gestione Materie",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_subject_management,
             height=80,
@@ -198,7 +198,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Cambio Utente
         self.user_btn = ctk.CTkButton(
             self.menu_frame,
-            text="👤 Cambia Utente",
+            text="Cambia Utente",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_change_user,
             height=80,
@@ -213,7 +213,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Analytics
         self.analytics_btn = ctk.CTkButton(
             self.menu_frame,
-            text="📊 Analytics\n📈 Grafici & Statistiche",
+            text="Analytics\nGrafici & Statistiche",
             font=ctk.CTkFont(size=14, weight="bold"),
             command=self.show_analytics,
             height=80,
@@ -295,7 +295,7 @@ class TimeTrackerApp(ctk.CTk):
         """Mostra finestra analytics"""
         try:
             from gui_windows import AnalyticsWindow
-            AnalyticsWindow(self)
+            analytics_window = AnalyticsWindow(self)
         except Exception as e:
             messagebox.showerror("Errore Analytics", f"Errore apertura analytics: {e}")
 

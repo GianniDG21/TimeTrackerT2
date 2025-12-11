@@ -218,42 +218,43 @@ class UIHelpers:
         """Restituisce un emoji appropriato per la materia"""
         subject_lower = subject_name.lower()
         
-        emoji_map = {
-            'matematica': '[M]', 'fisica': '[F]', 'italiano': '[I]', 'chimica': '🧪', 'biologia': '🧬', 'scienze': '🔬',
-            'inglese': '🇬🇧', 'francese': '🇫🇷', 'spagnolo': '🇪🇸',
-            'storia': '📜', 'geografia': '🗺️', 'filosofia': '🤔', 'letteratura': '📚',
-            'programmazione': '💻', 'coding': '💻', 'python': '🐍', 'java': '☕',
-            'web': '🌐', 'html': '📝', 'css': '🎨', 'javascript': '📜',
-            'database': '🗄️', 'sql': '🗄️', 'bdd': '🗄️',
-            'economia': '💰', 'diritto': '⚖️', 'psicologia': '🧠',
-            'arte': '🎨', 'musica': '🎵', 'sport': '⚽', 'fitness': '💪',
-            'studio': '📖', 'lettura': '📚', 'ricerca': '🔍',
-            'golang': '🐹', 'go': '🐹', 'rust': '🦀', 'c++': '⚙️',
-            'analisi': '📊', 'dati': '📊', 'analisidati': '📊',
-            'sistemi': '🖥️', 'reti': '🌐', 'sicurezza': '🔒',
-            'gioco': '🎮', 'game': '🎮', 'hobby': '🎯'
+        abbrev_map = {
+            'matematica': '[MAT]', 'fisica': '[FIS]', 'italiano': '[ITA]', 
+            'chimica': '[CHI]', 'biologia': '[BIO]', 'scienze': '[SCI]',
+            'inglese': '[ENG]', 'francese': '[FRA]', 'spagnolo': '[SPA]',
+            'storia': '[STO]', 'geografia': '[GEO]', 'filosofia': '[FIL]', 'letteratura': '[LET]',
+            'programmazione': '[PRG]', 'coding': '[COD]', 'python': '[PY]', 'java': '[JAV]',
+            'web': '[WEB]', 'html': '[HTM]', 'css': '[CSS]', 'javascript': '[JS]',
+            'database': '[DB]', 'sql': '[SQL]', 'bdd': '[BDD]',
+            'economia': '[ECO]', 'diritto': '[DIR]', 'psicologia': '[PSI]',
+            'arte': '[ART]', 'musica': '[MUS]', 'sport': '[SPO]', 'fitness': '[FIT]',
+            'studio': '[STU]', 'lettura': '[LET]', 'ricerca': '[RIC]',
+            'golang': '[GO]', 'go': '[GO]', 'rust': '[RST]', 'c++': '[C++]',
+            'analisi': '[ANA]', 'dati': '[DAT]', 'analisidati': '[AD]',
+            'sistemi': '[SIS]', 'reti': '[NET]', 'sicurezza': '[SEC]',
+            'gioco': '[GAM]', 'game': '[GAM]', 'hobby': '[HOB]'
         }
         
-        for keyword, emoji in emoji_map.items():
+        for keyword, abbrev in abbrev_map.items():
             if keyword in subject_lower:
-                return emoji
+                return abbrev
         
-        return '📚'  # Emoji default
+        return f'[{subject_name[0].upper()}]'  # Prima lettera come default
     
     @staticmethod
     def get_motivation_message():
         """Restituisce un messaggio motivazionale casuale"""
         messages = [
-            "🌟 Ogni sessione di studio è un passo verso il successo!",
-            "💪 La costanza è la chiave del progresso!",
-            "🎯 Concentrati sul tuo obiettivo, sei sulla strada giusta!",
-            "🚀 Ogni minuto investito nello studio è un investimento nel tuo futuro!",
-            "⭐ Il sapere è l'unico tesoro che nessuno può rubarti!",
-            "🔥 La disciplina è libertà attraverso l'autodeterminazione!",
-            "💎 La conoscenza è il più prezioso dei tesori!",
-            "🌈 Il successo è la somma di piccoli sforzi ripetuti giorno dopo giorno!",
-            "🎪 Impara qualcosa di nuovo ogni giorno!",
-            "🏆 L'eccellenza è un'abitudine, non un atto!"
+            "Ogni sessione di studio e' un passo verso il successo!",
+            "La costanza e' la chiave del progresso!",
+            "Concentrati sul tuo obiettivo, sei sulla strada giusta!",
+            "Ogni minuto investito nello studio e' un investimento nel tuo futuro!",
+            "Il sapere e' l'unico tesoro che nessuno puo' rubarti!",
+            "La disciplina e' liberta' attraverso l'autodeterminazione!",
+            "La conoscenza e' il piu' prezioso dei tesori!",
+            "Il successo e' la somma di piccoli sforzi ripetuti giorno dopo giorno!",
+            "Impara qualcosa di nuovo ogni giorno!",
+            "L'eccellenza e' un'abitudine, non un atto!"
         ]
         
         import random
