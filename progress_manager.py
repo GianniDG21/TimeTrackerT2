@@ -180,8 +180,11 @@ class ProgressManager:
             sessions = dataM.load_sessions(user)
             subject_sessions = [s for s in sessions if s.get('materia') == materia]
             total_minutes = sum(s.get('durata', 0) for s in subject_sessions)
+            # DEBUG temporaneo
+            print(f"DEBUG: Calcolo ore per {materia} - Sessioni trovate: {len(subject_sessions)}, Minuti totali: {total_minutes}")
             return total_minutes / 60
-        except Exception:
+        except Exception as e:
+            print(f"ERROR in _calculate_total_subject_hours: {e}")
             return 0.0
     
     def _format_time(self, minuti: int) -> str:
@@ -311,8 +314,8 @@ class ProgressManager:
             # Calcola ore totali dalla sessioni dell'utente
             try:
                 all_sessions = dataM.load_sessions(user)
-                user_sessions = [s for s in all_sessions if s.get('subject') == materia]
-                ore_totali = sum(s.get('duration', 0) for s in user_sessions) / 60.0  # Converti minuti in ore
+                user_sessions = [s for s in all_sessions if s.get('materia') == materia]
+                ore_totali = sum(s.get('durata', 0) for s in user_sessions) / 60.0  # Converti minuti in ore
                 
                 # Calcola copertura note (percentuale sessioni con note)
                 sessions_with_notes = len([s for s in user_sessions if s.get('note_argomento')])
@@ -353,12 +356,7 @@ class ProgressManager:
         """Aggiunge una milestone manuale"""
         try:
             # Calcola ore totali per la materia
-            try:
-                all_sessions = dataM.load_sessions(user)
-                user_sessions = [s for s in all_sessions if s.get('subject') == materia]
-                ore_totali_materia = sum(s.get('duration', 0) for s in user_sessions) / 60.0
-            except:
-                ore_totali_materia = 0
+            ore_totali_materia = self._calculate_total_subject_hours(user, materia)
             
             # Crea la nota milestone
             note = {
