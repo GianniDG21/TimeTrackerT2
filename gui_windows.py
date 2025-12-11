@@ -67,7 +67,7 @@ class NewSessionWindow:
         # Titolo
         title_label = ctk.CTkLabel(
             main_frame,
-            text="🚀 Nuova Sessione di Studio",
+            text="Nuova Sessione di Studio",
             font=ctk.CTkFont(size=24, weight="bold")
         )
         title_label.pack(pady=(20, 30))
@@ -104,7 +104,7 @@ class NewSessionWindow:
         
         duration_label = ctk.CTkLabel(
             duration_frame,
-            text="⏱️ Durata (minuti):",
+            text="Durata (minuti):",
             font=ctk.CTkFont(size=16, weight="bold")
         )
         duration_label.pack(pady=(15, 5))
@@ -143,7 +143,7 @@ class NewSessionWindow:
         # Pulsante Avvia Timer - Design elegante
         self.start_timer_btn = ctk.CTkButton(
             button_frame,
-            text="⏱️ Avvia con Timer",
+            text="Avvia con Timer",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.start_with_timer,
             height=40,
@@ -259,7 +259,7 @@ class NewSessionWindow:
             success = dataM.save_session(self.main_app.current_user, subject, duration)
             
             if success:
-                messagebox.showinfo("Successo", f"✅ Sessione manuale salvata!\n\n📚 Materia: {subject}\n⏱️ Durata: {duration} minuti")
+                messagebox.showinfo("Successo", f"Sessione manuale salvata!\n\nMateria: {subject}\nDurata: {duration} minuti")
                 self.window.destroy()
             else:
                 messagebox.showerror("Errore", "❌ Errore nel salvataggio della sessione!")
@@ -323,7 +323,7 @@ class SessionHistoryWindow:
         # Titolo
         title_label = ctk.CTkLabel(
             main_frame,
-            text="📊 Storico Sessioni",
+            text="Storico Sessioni",
             font=ctk.CTkFont(size=24, weight="bold")
         )
         title_label.pack(pady=(20, 20))
@@ -480,7 +480,7 @@ class SubjectManagementWindow:
         # Titolo
         title_label = ctk.CTkLabel(
             main_frame,
-            text="📚 Gestione Materie",
+            text="Gestione Materie",
             font=ctk.CTkFont(size=24, weight="bold")
         )
         title_label.pack(pady=(20, 20))
@@ -683,7 +683,7 @@ class TimerWindow:
         self.timer_thread = None
         
         self.window = ctk.CTkToplevel(main_app)
-        self.window.title(f"⏱️ Timer - {subject}")
+        self.window.title(f"Timer - {subject}")
         self.window.geometry("700x550")
         self.window.resizable(True, True)
         self.window.minsize(600, 500)
@@ -883,7 +883,7 @@ class TimerWindow:
             if success:
                 messagebox.showinfo(
                     "Sessione Completata", 
-                    f"✅ Sessione salvata con successo!\n\n📚 Materia: {self.subject}\n⏱️ Durata: {effective_duration} minuti"
+                    f"Sessione salvata con successo!\n\nMateria: {self.subject}\nDurata: {effective_duration} minuti"
                 )
             else:
                 messagebox.showerror("Errore", "❌ Errore nel salvataggio della sessione!")
@@ -1338,3 +1338,300 @@ class StopwatchWindow:
         except Exception as e:
             print(f"Errore chiusura StopwatchWindow: {e}")
             self.window.destroy()
+
+
+class AnalyticsWindow:
+    """Finestra per l'analisi dei dati e visualizzazione grafici"""
+    
+    def __init__(self, main_app):
+        self.main_app = main_app
+        self.current_user = main_app.current_user
+        
+        # Inizializza analytics engine
+        try:
+            from analytics_engine import AnalyticsEngine
+            from chart_generator import ChartGenerator
+            
+            self.analytics = AnalyticsEngine(self.current_user)
+            self.chart_gen = ChartGenerator(self.analytics)
+            
+            self.setup_window()
+            self.create_widgets()
+            self.load_initial_data()
+            
+            # Assicurati che la finestra sia visibile
+            self.window.lift()
+            self.window.focus_force()
+            
+        except Exception as e:
+            print(f"ERRORE ANALYTICS: {e}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Errore", f"Errore analytics: {e}")
+            # Crea finestra di errore invece di uscire
+            self.create_error_window(e)
+    
+    def create_error_window(self, error):
+        """Crea una finestra di errore quando l'analytics non può essere caricato"""
+        self.window = ctk.CTkToplevel(self.main_app)
+        self.window.title("Errore Analytics")
+        self.window.geometry("500x300")
+        
+        error_label = ctk.CTkLabel(
+            self.window,
+            text=f"Impossibile caricare l'Analytics:\\n{str(error)}",
+            font=ctk.CTkFont(size=14),
+            wraplength=450
+        )
+        error_label.pack(expand=True, padx=20, pady=20)
+        
+        close_btn = ctk.CTkButton(
+            self.window,
+            text="Chiudi",
+            command=self.window.destroy
+        )
+        close_btn.pack(pady=10)
+    
+    def setup_window(self):
+        """Configura la finestra principale"""
+        self.window = ctk.CTkToplevel(self.main_app)
+        self.window.title("Analytics - TimeTrackerT2")
+        self.window.geometry("1200x800")
+        self.window.resizable(True, True)
+        self.window.minsize(1000, 700)
+        
+        # Configura il grid
+        self.window.grid_rowconfigure(1, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
+    
+    def create_widgets(self):
+        """Crea i widget dell'interfaccia"""
+        
+        # Frame del titolo
+        title_frame = ctk.CTkFrame(self.window)
+        title_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+        
+        title_label = ctk.CTkLabel(
+            title_frame,
+            text=f"Analytics per {self.current_user}",
+            font=ctk.CTkFont(size=24, weight="bold")
+        )
+        title_label.pack(pady=15)
+        
+        # Frame controlli periodo
+        controls_frame = ctk.CTkFrame(self.window)
+        controls_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(0, 10))
+        
+        # Selezione periodo
+        period_label = ctk.CTkLabel(controls_frame, text="Periodo:")
+        period_label.grid(row=1, column=0, padx=10, pady=10)
+        
+        self.period_var = ctk.StringVar(value="tutto")
+        period_menu = ctk.CTkOptionMenu(
+            controls_frame,
+            variable=self.period_var,
+            values=["tutto", "oggi", "settimana", "mese"],
+            command=self.on_period_change
+        )
+        period_menu.grid(row=1, column=1, padx=10, pady=10)
+        
+        # Pulsanti per tipi di grafico
+        chart_types_frame = ctk.CTkFrame(controls_frame)
+        chart_types_frame.grid(row=1, column=2, columnspan=4, padx=20, pady=10)
+        
+        self.create_chart_buttons(chart_types_frame)
+        
+        # Frame principale contenuto
+        main_frame = ctk.CTkFrame(self.window)
+        main_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+        main_frame.grid_rowconfigure(0, weight=1)
+        main_frame.grid_columnconfigure(1, weight=1)
+        
+        # Sidebar per statistiche
+        self.create_stats_sidebar(main_frame)
+        
+        # Area grafico
+        self.create_chart_area(main_frame)
+    
+    def create_chart_buttons(self, parent):
+        """Crea i pulsanti per i tipi di grafico"""
+        buttons = [
+            ("Dashboard", self.show_dashboard),
+            ("Materie (Torta)", lambda: self.show_subject_chart("pie")),
+            ("Materie (Barre)", lambda: self.show_subject_chart("bar")),
+            ("Pattern Orario", self.show_hourly_heatmap),
+            ("Pattern Settimanale", self.show_weekday_pattern)
+        ]
+        
+        for i, (text, command) in enumerate(buttons):
+            btn = ctk.CTkButton(
+                parent, 
+                text=text,
+                command=command,
+                width=130,
+                height=30
+            )
+            btn.grid(row=i//4, column=i%4, padx=5, pady=5)
+    
+    def create_stats_sidebar(self, parent):
+        """Crea la sidebar con le statistiche"""
+        stats_frame = ctk.CTkScrollableFrame(parent, width=250)
+        stats_frame.grid(row=0, column=0, sticky="ns", padx=(0, 10), pady=10)
+        
+        # Titolo statistiche
+        stats_title = ctk.CTkLabel(
+            stats_frame,
+            text="Statistiche",
+            font=ctk.CTkFont(size=18, weight="bold")
+        )
+        stats_title.pack(pady=(0, 20))
+        
+        # Textbox per le statistiche
+        self.stats_text = ctk.CTkTextbox(
+            stats_frame,
+            width=230,
+            height=400,
+            wrap="word"
+        )
+        self.stats_text.pack(fill="both", expand=True)
+        
+    def create_chart_area(self, parent):
+        """Crea l'area per i grafici"""
+        # Frame per il grafico
+        self.chart_frame = ctk.CTkFrame(parent)
+        self.chart_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        self.chart_frame.grid_rowconfigure(0, weight=1)
+        self.chart_frame.grid_columnconfigure(0, weight=1)
+        
+        # Label di benvenuto
+        welcome_label = ctk.CTkLabel(
+            self.chart_frame,
+            text="Seleziona un tipo di grafico per iniziare!",
+            font=ctk.CTkFont(size=16)
+        )
+        welcome_label.grid(row=0, column=0, pady=50)
+    
+    def load_initial_data(self):
+        """Carica i dati iniziali"""
+        self.update_stats()
+    
+    def update_stats(self):
+        """Aggiorna le statistiche nella sidebar"""
+        try:
+            insights = self.analytics.get_productivity_insights()
+            
+            stats_text = f"""
+STATISTICHE GENERALI
+
+Sessioni Totali: {insights['total_sessions']}
+Ore Totali: {insights['total_hours']:.1f}h
+Media per Sessione: {insights['avg_session_length']:.1f}h
+
+TOP PERFORMANCE
+
+Materia più Studiata:
+{insights['most_studied_subject']}
+
+Ora più Produttiva:
+{insights['most_productive_hour']}
+
+Giorno più Produttivo:
+{insights['most_productive_day']}
+
+ANALISI PERIODO CORRENTE
+
+Tempo Totale: {self.analytics.get_total_study_time(self.period_var.get()):.1f}h
+
+            """
+            
+            # Aggiungi statistiche per materia del periodo corrente
+            subject_stats = self.analytics.get_study_time_by_subject(self.period_var.get())
+            if subject_stats:
+                stats_text += "\nTEMPO PER MATERIA:\n"
+                for subject, hours in sorted(subject_stats.items(), key=lambda x: x[1], reverse=True):
+                    stats_text += f"- {subject}: {hours:.1f}h\n"
+            
+            self.stats_text.delete("1.0", "end")
+            self.stats_text.insert("1.0", stats_text)
+            
+        except Exception as e:
+            print(f"Errore aggiornamento statistiche: {e}")
+    
+    def clear_chart_area(self):
+        """Pulisce l'area del grafico"""
+        for widget in self.chart_frame.winfo_children():
+            widget.destroy()
+    
+    def display_chart(self, figure):
+        """Mostra un grafico matplotlib"""
+        try:
+            from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+            
+            self.clear_chart_area()
+            
+            canvas = FigureCanvasTkAgg(figure, self.chart_frame)
+            canvas.draw()
+            
+            canvas_widget = canvas.get_tk_widget()
+            canvas_widget.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+            
+            # Toolbar rimossa per evitare conflitti geometry manager
+            
+        except Exception as e:
+            print(f"Errore visualizzazione grafico: {e}")
+            self.show_error_message(f"Errore nella visualizzazione: {e}")
+    
+    def show_error_message(self, message):
+        """Mostra messaggio di errore"""
+        self.clear_chart_area()
+        error_label = ctk.CTkLabel(
+            self.chart_frame,
+            text=f"ERRORE: {message}",
+            font=ctk.CTkFont(size=14),
+            text_color="red"
+        )
+        error_label.grid(row=0, column=0, pady=50)
+    
+    # Metodi per i diversi tipi di grafici
+    def show_dashboard(self):
+        """Mostra dashboard generale"""
+        try:
+            fig = self.chart_gen.create_productivity_dashboard()
+            self.display_chart(fig)
+        except Exception as e:
+            self.show_error_message(f"Errore dashboard: {e}")
+    
+    def show_subject_chart(self, chart_type="pie"):
+        """Mostra grafico distribuzione materie"""
+        try:
+            fig = self.chart_gen.create_subject_distribution_chart(
+                period=self.period_var.get(),
+                chart_type=chart_type
+            )
+            self.display_chart(fig)
+        except Exception as e:
+            self.show_error_message(f"Errore grafico materie: {e}")
+    
+    # Funzioni trend giornaliero e confronto settimanale rimosse per semplificare l'interfaccia
+    
+    def show_hourly_heatmap(self):
+        """Mostra heatmap oraria"""
+        try:
+            fig = self.chart_gen.create_hourly_heatmap()
+            self.display_chart(fig)
+        except Exception as e:
+            self.show_error_message(f"Errore pattern orario: {e}")
+    
+    def show_weekday_pattern(self):
+        """Mostra pattern settimanale"""
+        try:
+            fig = self.chart_gen.create_weekday_pattern_chart()
+            self.display_chart(fig)
+        except Exception as e:
+            self.show_error_message(f"Errore pattern settimanale: {e}")
+    
+    def on_period_change(self, new_period):
+        """Callback per cambio periodo"""
+        self.update_stats()
+        # Ricarica il grafico corrente se presente
+        # (Implementazione opzionale per auto-refresh)

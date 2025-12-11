@@ -138,7 +138,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Nuova Sessione
         self.new_session_btn = ctk.CTkButton(
             self.menu_frame,
-            text="🚀 Nuova Sessione",
+            text="Nuova Sessione",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_new_session,
             height=80,
@@ -153,7 +153,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Storico Sessioni
         self.history_btn = ctk.CTkButton(
             self.menu_frame,
-            text="📊 Storico Sessioni",
+            text="Storico Sessioni",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_session_history,
             height=80,
@@ -168,7 +168,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Timer  
         self.timer_btn = ctk.CTkButton(
             self.menu_frame,
-            text="⏱️ Cronometro",
+            text="Cronometro",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_stopwatch,
             height=80,
@@ -183,7 +183,7 @@ class TimeTrackerApp(ctk.CTk):
         # Pulsante Gestione Materie
         self.subjects_btn = ctk.CTkButton(
             self.menu_frame,
-            text="📚 Gestione Materie",
+            text="Gestione Materie",
             font=ctk.CTkFont(size=16, weight="bold"),
             command=self.show_subject_management,
             height=80,
@@ -195,35 +195,35 @@ class TimeTrackerApp(ctk.CTk):
         )
         self.subjects_btn.grid(row=1, column=0, padx=15, pady=15, sticky="nsew")
         
-        # Pulsante Cambio Utente (DISABILITATO)
+        # Pulsante Cambio Utente
         self.user_btn = ctk.CTkButton(
             self.menu_frame,
-            text="👤 Non Disponibile",
+            text="Cambia Utente",
             font=ctk.CTkFont(size=16, weight="bold"),
-            command=lambda: messagebox.showinfo("Funzione Disabilitata", "Il cambio utente è temporaneamente disabilitato."),
+            command=self.show_change_user,
             height=80,
             corner_radius=15,
-            fg_color=("gray40", "gray30"),
-            hover_color=("gray50", "gray40"),
+            fg_color=("#0f766e", "#14b8a6"),
+            hover_color=("#0d9488", "#5eead4"),
             border_width=1,
-            border_color=("gray60", "gray50"),
-            state="disabled"
+            border_color=("#5eead4", "#99f6e4")
         )
         self.user_btn.grid(row=1, column=1, padx=15, pady=15, sticky="nsew")
         
-        # Pulsante Impostazioni
-        self.settings_btn = ctk.CTkButton(
+        # Pulsante Analytics
+        self.analytics_btn = ctk.CTkButton(
             self.menu_frame,
-            text="⚙️ Impostazioni\n🚧 WIP",
+            text="Analytics\nGrafici & Statistiche",
             font=ctk.CTkFont(size=14, weight="bold"),
-            command=self.show_settings,
+            command=self.show_analytics,
             height=80,
             corner_radius=15,
-            fg_color=("#404040", "#404040"),
-            hover_color=("#505050", "#505050"),
-            text_color=("#888888", "#888888")
+            fg_color=("#be185d", "#ec4899"),
+            hover_color=("#db2777", "#f472b6"),
+            border_width=1,
+            border_color=("#f472b6", "#fbbf24")
         )
-        self.settings_btn.grid(row=1, column=2, padx=15, pady=15, sticky="nsew")
+        self.analytics_btn.grid(row=1, column=2, padx=15, pady=15, sticky="nsew")
 
     def create_footer(self):
         """Crea footer con info"""
@@ -250,7 +250,7 @@ class TimeTrackerApp(ctk.CTk):
         if any(portable_indicators):
             portable_label = ctk.CTkLabel(
                 self.info_frame,
-                text="🎒 Modalità Portable Attiva",
+                text="Modalita' Portable Attiva",
                 font=ctk.CTkFont(size=10),
                 text_color=("#4ade80", "#22c55e")
             )
@@ -292,12 +292,16 @@ class TimeTrackerApp(ctk.CTk):
             messagebox.showerror("Errore", f"Errore cambio utente: {e}")
 
     def show_analytics(self):
-        """Mostra analytics - WIP"""
-        messagebox.showinfo("Analytics - WIP", "🚧 Funzionalità in sviluppo!\nSarai tu a implementarla! 💻")
+        """Mostra finestra analytics"""
+        try:
+            from gui_windows import AnalyticsWindow
+            analytics_window = AnalyticsWindow(self)
+        except Exception as e:
+            messagebox.showerror("Errore Analytics", f"Errore apertura analytics: {e}")
 
     def show_settings(self):
         """Mostra impostazioni - WIP"""
-        messagebox.showinfo("Impostazioni - WIP", "🚧 Funzionalità in sviluppo!\nSarai tu a implementarla! 💻")
+        messagebox.showinfo("Impostazioni - WIP", "Funzionalita' in sviluppo!\nSarai tu a implementarla!")
         
     def on_closing(self):
         """Gestisce la chiusura sicura dell'applicazione"""
