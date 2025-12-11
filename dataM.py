@@ -66,10 +66,50 @@ def save_session(user, materia, durata):
         with open('sessions.json', 'a') as f:
             json.dump(session, f)
             f.write('\n')  # Add newline for each session
+        
+        # Controllo automatico obiettivi raggiuti
+        try:
+            _check_goals_after_session(user)
+        except Exception as goal_error:
+            print(f"Errore controllo obiettivi: {goal_error}")
+            # Non interrompere il salvataggio se c'è un errore negli obiettivi
+        
         return True
     except Exception as e:
         print(f"Errore nel salvataggio della sessione: {e}")
         return False
+
+def _check_goals_after_session(user):
+    """Controlla se ci sono obiettivi appena raggiunti dopo una sessione"""
+    try:
+        from goals_manager import GoalsManager
+        from tkinter import messagebox
+        
+        goals_manager = GoalsManager()
+        completed_goals = goals_manager.check_completed_goals(user)
+        
+        # Mostra notifiche per ogni obiettivo completato
+        for goal in completed_goals:
+            materia = goal['materia']
+            target_time = goals_manager.format_time(goal['tempo_target_minuti'])
+            intervallo = goal['intervallo']
+            
+            # Notifica di congratulazioni
+            messagebox.showinfo(
+                "Obiettivo Raggiunto!",
+                f"Congratulazioni!\\n\\n"
+                f"Hai completato l'obiettivo:\\n"
+                f"Materia: {materia}\\n"
+                f"Tempo: {target_time}\\n"
+                f"Intervallo: {intervallo}\\n\\n"
+                f"Continua cosi!"
+            )
+            
+    except ImportError:
+        # goals_manager non disponibile, ignora silenziosamente
+        pass
+    except Exception as e:
+        print(f"Errore nel controllo obiettivi: {e}")
 
 def load_sessions(user):
     """Load sessions for a specific user"""
