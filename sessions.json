@@ -48,3 +48,6 @@
 {"id": 48, "user": "Gianni", "materia": "AnalisiDati", "durata": 45, "timestamp": "2025-12-11 18:54:17"}
 {"id": 49, "user": "Gianni", "materia": "AnalisiDati", "durata": 28, "timestamp": "2025-12-11 19:23:06"}
 {"id": 50, "user": "TestUser", "materia": "Fisica", "durata": 60, "timestamp": "2025-12-11 20:32:16", "note_argomento": "Meccanica quantistica - Equazione di Schr\u00f6dinger"}
+{"id": 51, "user": "Gianni", "materia": "test", "durata": 15, "timestamp": "2025-12-11 23:45:25"}
+{"id": 52, "user": "Gianni", "materia": "test", "durata": 1, "timestamp": "2025-12-11 23:47:45"}
+{"id": 53, "user": "Gianni", "materia": "test", "durata": 1, "timestamp": "2025-12-11 23:51:43"}

@@ -113,12 +113,22 @@ class AeroStyleMixin:
         content_frame.pack(fill="both", expand=True, padx=20, pady=(0, 20))
         
         return card_frame, content_frame
+    
+    def setup_aero_styling(self):
+        """Configura stile Aero coerente per la finestra"""
+        self.colors = self.get_aero_colors()
+        
+        # Applica tema scuro/chiaro globale
+        if hasattr(self, 'window') and self.window:
+            self.window.configure(fg_color=self.colors['glass_bg'])
+            
+        return self.colors
 
-class NewSessionWindow:
+class NewSessionWindow(AeroStyleMixin):
     def __init__(self, main_app):
         self.main_app = main_app
         self.window = ctk.CTkToplevel(main_app)
-        self.window.title("� Nuova Sessione di Studio")
+        self.window.title("🎯 Nuova Sessione di Studio")
         self.window.geometry("700x650")
         self.window.resizable(True, True)
         self.window.minsize(650, 600)
@@ -404,10 +414,10 @@ class NewSessionWindow:
         content = ctk.CTkFrame(card_frame, fg_color="transparent")
         content.pack(fill="both", expand=True, padx=25, pady=25)
         
-        # Pulsante principale - Avvia Sessione
-        self.start_session_btn = ctk.CTkButton(
+        # Pulsante principale - Timer (ora principale)
+        self.timer_btn = ctk.CTkButton(
             content,
-            text="🚀 Avvia Sessione",
+            text="⏲️ Avvia con Timer",
             font=ctk.CTkFont(size=20, weight="bold"),
             width=300,
             height=60,
@@ -416,27 +426,27 @@ class NewSessionWindow:
             hover_color=("#1d4ed8", "#2563eb"),
             border_width=3,
             border_color=("#60a5fa", "#93c5fd"),
-            command=self.start_session
+            command=self.start_with_timer
         )
-        self.start_session_btn.pack(pady=(0, 15))
+        self.timer_btn.pack(pady=(0, 15))
         
         # Pulsanti secondari in riga
         secondary_frame = ctk.CTkFrame(content, fg_color="transparent")
         secondary_frame.pack(fill="x", pady=(0, 10))
         
-        # Timer mode
-        self.timer_btn = ctk.CTkButton(
+        # Registrazione manuale (ora secondaria)
+        self.start_session_btn = ctk.CTkButton(
             secondary_frame,
-            text="⏲️ Con Timer",
+            text="🚀 Registra Manualmente",
             font=ctk.CTkFont(size=16, weight="bold"),
             width=140,
             height=45,
             corner_radius=22,
             fg_color=("#dc2626", "#b91c1c"),
             hover_color=("#b91c1c", "#dc2626"),
-            command=self.start_with_timer
+            command=self.start_session
         )
-        self.timer_btn.pack(side="left", padx=(0, 10))
+        self.start_session_btn.pack(side="left", padx=(0, 10))
         
         # Annulla
         cancel_btn = ctk.CTkButton(
@@ -2376,112 +2386,201 @@ class GoalsWindow:
             print(f"Errore controllo completamenti: {e}")
 
 
-class NoteDialog:
-    """Finestra di dialogo per inserire note argomento a fine sessione"""
+class NoteDialog(AeroStyleMixin):
+    """Finestra di dialogo moderna per inserire note argomento a fine sessione"""
     
     def __init__(self, parent, materia, durata_minuti):
         self.materia = materia
         self.durata_minuti = durata_minuti
         self.note_text = ""
         
-        # Crea finestra dialogo
-        self.dialog = ctk.CTkToplevel(parent)
-        self.dialog.title("Aggiungi Nota Argomento")
-        self.dialog.geometry("500x350")
-        self.dialog.resizable(False, False)
+        # Setup stile Aero
+        self.setup_aero_styling()
         
-        # Centra la finestra
+        # Crea finestra dialogo moderna
+        self.dialog = ctk.CTkToplevel(parent)
+        self.dialog.title("📝 Aggiungi Nota Argomento")
+        self.dialog.geometry("600x500")
+        self.dialog.resizable(True, True)
+        self.dialog.minsize(550, 450)
+        
+        # Styling Aero per la finestra
+        self.dialog.configure(fg_color=self.colors['glass_bg'])
+        
+        # Centra e configura finestra
         self.dialog.transient(parent)
         self.dialog.grab_set()
+        self.center_window()
         
+        # Setup UI e focus
         self.setup_ui()
-        
-        # Focus sul campo testo
         self.note_entry.focus_set()
     
+    def center_window(self):
+        """Centra la finestra sullo schermo"""
+        self.dialog.update_idletasks()
+        width = self.dialog.winfo_width()
+        height = self.dialog.winfo_height()
+        pos_x = (self.dialog.winfo_screenwidth() // 2) - (width // 2)
+        pos_y = (self.dialog.winfo_screenheight() // 2) - (height // 2)
+        self.dialog.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
+    
     def setup_ui(self):
-        """Crea l'interfaccia del dialogo"""
+        """Crea l'interfaccia moderna con design Aero"""
         
-        # Frame principale
-        main_frame = ctk.CTkFrame(self.dialog)
+        # Frame principale con gradient Aero
+        main_frame = ctk.CTkFrame(
+            self.dialog,
+            corner_radius=20,
+            fg_color=self.colors['glass_bg'],
+            border_width=2,
+            border_color=self.colors['border_light']
+        )
         main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
-        # Titolo
-        title_label = ctk.CTkLabel(
+        # === HEADER CON GLASS EFFECT ===
+        header_frame = self.create_aero_header(
             main_frame,
-            text="Sessione Completata!",
-            font=ctk.CTkFont(size=20, weight="bold")
+            "Sessione Completata! 🎉",
+            "✅",
+            "success_green"
         )
-        title_label.pack(pady=(20, 10))
         
-        # Info sessione
-        info_label = ctk.CTkLabel(
+        # === AREA SCROLLABILE ===
+        scroll_frame = ctk.CTkScrollableFrame(
             main_frame,
-            text=f"Materia: {self.materia}\nDurata: {self.durata_minuti} minuti",
-            font=ctk.CTkFont(size=14)
+            corner_radius=16,
+            fg_color="transparent",
+            scrollbar_button_color=self.colors['primary_blue'],
+            scrollbar_button_hover_color=self.colors['border_light']
         )
-        info_label.pack(pady=(0, 20))
+        scroll_frame.pack(fill="both", expand=True, padx=20, pady=(10, 20))
         
-        # Separatore
-        separator = ctk.CTkFrame(main_frame, height=2)
-        separator.pack(fill="x", pady=10)
-        
-        # Label per nota
-        note_label = ctk.CTkLabel(
-            main_frame,
-            text="Vuoi aggiungere una nota sull'argomento studiato?",
-            font=ctk.CTkFont(size=14, weight="bold")
+        # === CARD INFO SESSIONE ===
+        info_card, info_content = self.create_aero_card(
+            scroll_frame,
+            "Informazioni Sessione",
+            "📊",
+            "primary_blue"
         )
-        note_label.pack(pady=(10, 5))
+        info_card.pack(fill="x", pady=15, padx=10)
         
-        help_label = ctk.CTkLabel(
-            main_frame,
-            text="(es. Capitolo 5 - Normalizzazione database)",
+        # Calcola ore e minuti per display migliore
+        hours = self.durata_minuti // 60
+        minutes = self.durata_minuti % 60
+        
+        if hours > 0:
+            durata_text = f"{hours}h {minutes}m" if minutes > 0 else f"{hours}h"
+        else:
+            durata_text = f"{minutes}m"
+        
+        # Info sessione con icone
+        session_info = ctk.CTkFrame(
+            info_content,
+            fg_color="transparent",
+            corner_radius=12
+        )
+        session_info.pack(fill="x", pady=10)
+        
+        materia_label = ctk.CTkLabel(
+            session_info,
+            text=f"📚 Materia: {self.materia}",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            text_color=self.colors['text_primary'],
+            anchor="w"
+        )
+        materia_label.pack(fill="x", pady=(5, 2))
+        
+        durata_label = ctk.CTkLabel(
+            session_info,
+            text=f"⏱️ Durata: {durata_text}",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            text_color=self.colors['text_primary'],
+            anchor="w"
+        )
+        durata_label.pack(fill="x", pady=2)
+        
+        # === CARD NOTA ARGOMENTO ===
+        note_card, note_content = self.create_aero_card(
+            scroll_frame,
+            "Nota Argomento",
+            "📝",
+            "purple_creative"
+        )
+        note_card.pack(fill="x", pady=15, padx=10)
+        
+        # Testo helper
+        helper_text = ctk.CTkLabel(
+            note_content,
+            text="💭 Aggiungi una nota per tracciare gli argomenti studiati:\n"
+                 "• Aiuta a ricordare cosa hai fatto\n"
+                 "• Migliora l'analisi dei progressi\n"
+                 "• Facilita la revisione futura",
             font=ctk.CTkFont(size=12),
-            text_color="gray"
+            text_color=self.colors['text_secondary'],
+            justify="left"
         )
-        help_label.pack(pady=(0, 10))
+        helper_text.pack(fill="x", pady=(5, 15))
         
-        # Campo testo per nota
+        # Campo testo per nota con design moderno
         self.note_entry = ctk.CTkEntry(
-            main_frame,
-            placeholder_text="Inserisci argomento studiato (opzionale)...",
+            note_content,
+            placeholder_text="es. Capitolo 5 - Normalizzazione database, Esercizi algebra lineare...",
             font=ctk.CTkFont(size=14),
-            width=400,
-            height=40
+            width=500,
+            height=50,
+            corner_radius=12,
+            border_width=2,
+            border_color=self.colors['border_light']
         )
-        self.note_entry.pack(pady=(0, 20))
+        self.note_entry.pack(fill="x", pady=(0, 15))
         
         # Bind Enter per salvare
         self.note_entry.bind('<Return>', lambda e: self.save_note())
         
-        # Frame pulsanti
-        button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        button_frame.pack(pady=(10, 20))
-        
-        # Pulsante Salva con nota
-        save_btn = ctk.CTkButton(
-            button_frame,
-            text="Salva con Nota",
-            command=self.save_note,
-            height=35,
-            width=140,
-            fg_color=("#2d5aa0", "#3b82f6"),
-            hover_color=("#1e40af", "#60a5fa")
+        # === FOOTER FISSO CON PULSANTI ===
+        footer_frame = ctk.CTkFrame(
+            main_frame,
+            corner_radius=16,
+            fg_color=self.colors['card_bg'],
+            height=80
         )
-        save_btn.pack(side="left", padx=(0, 10))
+        footer_frame.pack(fill="x", padx=20, pady=(0, 20))
+        footer_frame.pack_propagate(False)
+        
+        # Container pulsanti centrato
+        buttons_container = ctk.CTkFrame(footer_frame, fg_color="transparent")
+        buttons_container.pack(expand=True, fill="both")
+        
+        # Pulsante Salva con nota - Design Aero
+        save_btn = ctk.CTkButton(
+            buttons_container,
+            text="📝 Salva con Nota",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            width=180,
+            height=50,
+            corner_radius=25,
+            fg_color=self.colors['success_green'],
+            hover_color=("#047857", "#059669"),
+            border_width=2,
+            border_color=("#10b981", "#34d399"),
+            command=self.save_note
+        )
+        save_btn.pack(side="left", padx=(20, 10), pady=15)
         
         # Pulsante Salta nota
         skip_btn = ctk.CTkButton(
-            button_frame,
-            text="Salta Nota",
-            command=self.skip_note,
-            height=35,
-            width=140,
-            fg_color=("#6b7280", "#9ca3af"),
-            hover_color=("#9ca3af", "#d1d5db")
+            buttons_container,
+            text="⏭️ Salta Nota",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            width=150,
+            height=50,
+            corner_radius=25,
+            fg_color=self.colors['gray_neutral'],
+            hover_color=("#4b5563", "#6b7280"),
+            command=self.skip_note
         )
-        skip_btn.pack(side="left")
+        skip_btn.pack(side="left", padx=10, pady=15)
     
     def save_note(self):
         """Salva la nota e chiude il dialogo"""
