@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "user": "Gianni",
+    "materia": "AnalisiDati",
+    "ore_target": 3,
+    "minuti_target": 0,
+    "tempo_target_minuti": 180,
+    "intervallo": "giorno",
+    "data_creazione": "2025-12-11T18:08:45.115133",
+    "completato": false,
+    "data_completamento": null
+  }
+]

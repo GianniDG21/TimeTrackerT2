@@ -1,4 +1,4 @@
 {
-  "default_user": null,
-  "auto_login": false
+  "default_user": "Gianni",
+  "auto_login": true
 }
