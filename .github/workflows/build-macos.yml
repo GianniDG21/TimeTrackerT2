@@ -69,33 +69,26 @@ jobs:
         echo "=== MacOS Executable ==="
         ls -la dist/TimeTrackerT2_v2.0.app/Contents/MacOS/
         
-    - name: Create DMG (Optional)
+    - name: Create proper app bundle archive
       run: |
-        # Create a simple DMG
+        cd dist
+        tar -czf TimeTrackerT2_v2.0_macOS.tar.gz TimeTrackerT2_v2.0.app
+        
+    - name: Create DMG
+      run: |
         mkdir -p dmg_temp
         cp -R dist/TimeTrackerT2_v2.0.app dmg_temp/
         ln -s /Applications dmg_temp/Applications
         hdiutil create -volname "TimeTrackerT2 v2.0" -srcfolder dmg_temp -ov -format UDZO dist/TimeTrackerT2_v2.0.dmg
         
-    - name: Upload App Bundle
+    - name: Upload App Bundle (TAR Archive)
       uses: actions/upload-artifact@v4
       with:
-        name: TimeTrackerT2-macOS-App
-        path: dist/TimeTrackerT2_v2.0.app/
+        name: TimeTrackerT2-macOS-TAR
+        path: dist/TimeTrackerT2_v2.0_macOS.tar.gz
         
     - name: Upload DMG
       uses: actions/upload-artifact@v4
       with:
         name: TimeTrackerT2-macOS-DMG
         path: dist/TimeTrackerT2_v2.0.dmg
-        
-    - name: Create proper app bundle archive
-      run: |
-        cd dist
-        tar -czf TimeTrackerT2_v2.0_macOS.tar.gz TimeTrackerT2_v2.0.app
-        
-    - name: Upload App Bundle (Compressed)
-      uses: actions/upload-artifact@v4
-      with:
-        name: TimeTrackerT2-macOS-App
-        path: dist/TimeTrackerT2_v2.0_macOS.tar.gz
