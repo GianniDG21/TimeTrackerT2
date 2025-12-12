@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # Permette di avviare manualmente
+  workflow_dispatch:
 
 jobs:
   build-macos:
@@ -20,42 +20,48 @@ jobs:
       with:
         python-version: '3.11'
         
-    - name: Cache pip dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-          
+    - name: Debug - Check project structure
+      run: |
+        echo "=== Current directory ==="
+        pwd
+        echo "=== Root contents ==="
+        ls -la
+        echo "=== Scripts directory ==="
+        ls -la scripts/ 2>/dev/null || echo "No scripts directory"
+        echo "=== Python version ==="
+        python --version
+        
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install customtkinter pygame pyinstaller pillow
+        echo "=== Installed packages ==="
+        pip list | grep -E "(customtkinter|pygame|pyinstaller)"
         
-    - name: Verify project structure
+    - name: Create missing files
       run: |
-        ls -la
-        echo "=== Checking main files ==="
-        ls -la main_gui.py 2>/dev/null || echo "❌ main_gui.py not found"
-        ls -la subjects.json 2>/dev/null || echo "⚠️ subjects.json not found"
-        ls -la sessions.json 2>/dev/null || echo "⚠️ sessions.json not found"
+        echo "=== Creating missing JSON files ==="
+        [ ! -f subjects.json ] && echo '[]' > subjects.json && echo "Created subjects.json"
+        [ ! -f sessions.json ] && echo '[]' > sessions.json && echo "Created sessions.json"
+        [ ! -f user_config.json ] && echo '{}' > user_config.json && echo "Created user_config.json"
+        [ ! -f goals.json ] && echo '[]' > goals.json && echo "Created goals.json"
+        [ ! -f progress_notes.json ] && echo '{}' > progress_notes.json && echo "Created progress_notes.json"
         
-    - name: Create missing JSON files
+    - name: Simple PyInstaller build
       run: |
-        # Crea file JSON se non esistono
-        [ ! -f subjects.json ] && echo '[]' > subjects.json
-        [ ! -f sessions.json ] && echo '[]' > sessions.json
-        [ ! -f user_config.json ] && echo '{}' > user_config.json
-        [ ! -f goals.json ] && echo '[]' > goals.json
-        [ ! -f progress_notes.json ] && echo '{}' > progress_notes.json
-        
-    - name: Build macOS App
-      run: |
-        echo "🍎 Starting macOS build..."
-        ls -la scripts/
-        python --version
-        python scripts/build_macos.py
+        echo "=== Starting simple build ==="
+        mkdir -p release
+        python -m PyInstaller \
+          --onefile \
+          --windowed \
+          --name=TimeTrackerT2_v2.0 \
+          --distpath=release \
+          --add-data="subjects.json:." \
+          --add-data="sessions.json:." \
+          --hidden-import=customtkinter \
+          --hidden-import=pygame \
+          --collect-all=customtkinter \
+          main_gui.py
         
     - name: Verify build output
       run: |
