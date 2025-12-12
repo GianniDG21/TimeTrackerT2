@@ -2,84 +2,90 @@
 
 **Applicazione moderna per il tracking del tempo di studio con interfaccia CustomTkinter**
 
-## 🚀 Avvio Rapido
+## ⚠️ DISCLAIMER IMPORTANTE
 
-### **Metodo 1: Eseguibile Portable (Raccomandato)**
+> **ATTENZIONE: Progetto Sperimentale in Fase di Sviluppo**
+> 
+> Il front-end del progetto e alcune sezioni del back-end sono state **create tramite Agenti AI**.
+> 
+> **Caratteristiche attuali (V2.0):**
+> - Presenza **VOLUTA** di errori strutturali per scopi sperimentali
+> - **OMISSIONE INTENZIONALE** di principi e best-practice (DRY, SOLID)
+> - Architettura monolitica per test metodologici
+>
+> **Metriche attuali:**
+> - ~5,500+ righe di codice totali
+> - 18 file Python principali  
+> - 3,302 righe concentrate in `gui_windows.py` (file monolitico)
+>
+> **Obiettivi del refactoring V3.0:**
+> - 📈 Manutenibilità: +400%
+> - 🧪 Testabilità: +300% 
+> - 🔧 Estensibilità: +250%
+> - 🐛 Debugging: +200%
+
+## 🚀 Installazione e Avvio
+
+### **Metodo 1: Eseguibile Portable (Consigliato)**
 ```bash
-# Scarica ed esegui
+# Download ed esecuzione diretta
 ./release/TimeTrackerT2_v2.0.exe
 ```
 
 ### **Metodo 2: Codice Sorgente**
 ```bash
-# Avvio normale
+# Avvio standard
 python main_gui.py
 
 # Avvio portable
 ./AVVIA_GUI_PORTABLE.bat
 ```
 
-## 📁 Struttura Progetto
+## ✨ Funzionalità
 
-```
-TimeTrackerT2/
-├── 📱 main_gui.py              # Applicazione principale GUI
-├── 🔧 gui_windows.py           # Finestre secondarie
-├── 🛠️ gui_utils.py             # Utilità GUI
-├── 💾 dataM.py                 # Gestione dati JSON
-├── 📊 sessions.json            # Dati sessioni
-├── 📚 subjects.json            # Materie di studio
-├── 👤 users.txt                # Utenti
-├── 🔊 sounds/                  # Audio notifiche
-├── 📦 release/                 # Eseguibile distribuibile
-│   └── TimeTrackerT2_v2.0.exe # File finale per distribuzione
-├── 📜 scripts/                 # Script di build e setup
-│   ├── auto_build.py           # Build automatico
-│   ├── diagnose_build.py       # Diagnosi problemi
-│   └── setup_portable.py      # Setup ambiente portable
-└── 📖 docs/                    # Documentazione
-```
+- 🎨 **Interfaccia moderna** con CustomTkinter
+- ⏱️ **Timer Pomodoro** con controlli pausa/ripresa
+- 📚 **Gestione materie** completamente personalizzabile
+- 📊 **Storico sessioni** con analisi dettagliate
+- 🔊 **Notifiche audio** integrate
+- 💼 **Versione portable** senza installazione
+- 🌙 **Tema scuro** con gradienti eleganti
+- 📈 **Sistema Analytics** (in sviluppo)
 
-## ⚡ Caratteristiche
+## 🛠️ Sviluppo
 
-- ✅ **Interfaccia moderna** con CustomTkinter
-- ✅ **Timer Pomodoro** con pausa/ripresa
-- ✅ **Gestione materie** personalizzabile
-- ✅ **Storico sessioni** dettagliato
-- ✅ **Audio notifiche** integrate
-- ✅ **Completamente portable** 
-- ✅ **Dark theme elegante** con gradienti
-- ✅ **Analytics WIP** (Work In Progress)
-
-## 🔧 Sviluppo
-
-### **Setup Ambiente**
+### **Configurazione Ambiente**
 ```bash
-# Setup portable
+# Setup ambiente portable
 python scripts/setup_portable.py
 
-# Avvio sviluppo
+# Avvio modalità sviluppo
 python main_gui.py
 ```
 
-### **Build Distribuzione**
+### **Creazione Build**
 ```bash
-# Build automatico
+# Build automatizzato
 ./BUILD_RELEASE.bat
 
 # Build manuale
 python scripts/auto_build.py
 ```
 
-## 📋 Requisiti
+## 📋 Requisiti di Sistema
 
-- **Runtime**: Windows 7/8/10/11
-- **Sviluppo**: Python 3.9+, CustomTkinter, Pygame
-- **Build**: PyInstaller, auto-py-to-exe
+### **Runtime**
+- Windows 7/8/10/11 (64-bit)
+
+### **Sviluppo** 
+- Python 3.9+
+- CustomTkinter
+- Pygame
+- PyInstaller / auto-py-to-exe
 
 ## 📄 Licenza
 
-Progetto personale - TimeTracker moderno per studenti
+Progetto personale per sperimentazione metodologica - TimeTracker educativo
 
 ---
-*Creato con ❤️ in Python + CustomTkinter*
+*Sviluppato con Python + CustomTkinter | Progetto sperimentale V2.0*
