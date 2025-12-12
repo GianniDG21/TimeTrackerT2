@@ -88,3 +88,14 @@ jobs:
       with:
         name: TimeTrackerT2-macOS-DMG
         path: dist/TimeTrackerT2_v2.0.dmg
+        
+    - name: Create proper app bundle archive
+      run: |
+        cd dist
+        tar -czf TimeTrackerT2_v2.0_macOS.tar.gz TimeTrackerT2_v2.0.app
+        
+    - name: Upload App Bundle (Compressed)
+      uses: actions/upload-artifact@v4
+      with:
+        name: TimeTrackerT2-macOS-App
+        path: dist/TimeTrackerT2_v2.0_macOS.tar.gz
