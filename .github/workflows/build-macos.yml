@@ -3,8 +3,6 @@ name: Build macOS App
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -12,88 +10,81 @@ jobs:
     runs-on: macos-latest
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
+    - uses: actions/checkout@v4
+    
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
         
-    - name: Debug - Check project structure
-      run: |
-        echo "=== Current directory ==="
-        pwd
-        echo "=== Root contents ==="
-        ls -la
-        echo "=== Scripts directory ==="
-        ls -la scripts/ 2>/dev/null || echo "No scripts directory"
-        echo "=== Python version ==="
-        python --version
-        
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install customtkinter pygame pyinstaller pillow
-        echo "=== Installed packages ==="
-        pip list | grep -E "(customtkinter|pygame|pyinstaller)"
+        pip install customtkinter pygame pyinstaller
         
-    - name: Create missing files
+    - name: Create required files
       run: |
-        echo "=== Creating missing JSON files ==="
-        echo '[]' > subjects.json
-        echo '[]' > sessions.json
-        echo '{}' > user_config.json
-        echo '[]' > goals.json
-        echo '{}' > progress_notes.json
-        echo "Files created successfully"
-        ls -la *.json
+        python3 -c "
+        import json
+        # Create sessions.json
+        with open('sessions.json', 'w') as f:
+            json.dump([], f)
+        # Create subjects.json  
+        with open('subjects.json', 'w') as f:
+            json.dump({'Demo': ['Python', 'JavaScript', 'React']}, f)
+        # Create users.txt
+        with open('users.txt', 'w') as f:
+            f.write('Demo User\n')
+        print('Files created successfully')
+        "
         
-    - name: Simple PyInstaller build
+    - name: Build macOS App Bundle
       run: |
-        echo "=== Starting simple build ==="
-        mkdir -p release
-        python -m PyInstaller \
-          --onefile \
+        pyinstaller \
+          --onedir \
           --windowed \
-          --name=TimeTrackerT2_v2.0 \
-          --distpath=release \
+          --name="TimeTrackerT2_v2.0" \
+          --distpath=dist \
           --add-data="subjects.json:." \
           --add-data="sessions.json:." \
+          --add-data="users.txt:." \
           --hidden-import=customtkinter \
           --hidden-import=pygame \
+          --hidden-import=tkinter \
+          --hidden-import=PIL \
           --collect-all=customtkinter \
+          --osx-bundle-identifier=com.timetracker.v2 \
           main_gui.py
-        
-    - name: Verify build output
+          
+    - name: Set proper permissions
       run: |
-        echo "=== Contents of release directory ==="
-        ls -la release/ || echo "No release directory found"
+        chmod -R 755 dist/TimeTrackerT2_v2.0.app
+        chmod +x dist/TimeTrackerT2_v2.0.app/Contents/MacOS/TimeTrackerT2_v2.0
         
-        if [ -f "release/TimeTrackerT2_v2.0" ]; then
-          echo "✅ macOS executable created successfully"
-          du -sh release/TimeTrackerT2_v2.0
-          file release/TimeTrackerT2_v2.0
-        else
-          echo "❌ macOS executable not found"
-          ls -la release/ 2>/dev/null || echo "Release directory empty"
-        fi
+    - name: Verify app bundle
+      run: |
+        echo "=== App Bundle Structure ==="
+        ls -la dist/
+        echo "=== App Contents ==="
+        ls -la dist/TimeTrackerT2_v2.0.app/Contents/
+        echo "=== MacOS Executable ==="
+        ls -la dist/TimeTrackerT2_v2.0.app/Contents/MacOS/
         
-    - name: Upload macOS Executable  
+    - name: Create DMG (Optional)
+      run: |
+        # Create a simple DMG
+        mkdir -p dmg_temp
+        cp -R dist/TimeTrackerT2_v2.0.app dmg_temp/
+        ln -s /Applications dmg_temp/Applications
+        hdiutil create -volname "TimeTrackerT2 v2.0" -srcfolder dmg_temp -ov -format UDZO dist/TimeTrackerT2_v2.0.dmg
+        
+    - name: Upload App Bundle
       uses: actions/upload-artifact@v4
-      if: success()
       with:
-        name: TimeTrackerT2-macOS-Executable
-        path: release/TimeTrackerT2_v2.0
-        if-no-files-found: error
+        name: TimeTrackerT2-macOS-App
+        path: dist/TimeTrackerT2_v2.0.app/
         
-    - name: Create Release (on tag)
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
+    - name: Upload DMG
+      uses: actions/upload-artifact@v4
       with:
-        files: |
-          release/TimeTrackerT2_v2.0
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: TimeTrackerT2-macOS-DMG
+        path: dist/TimeTrackerT2_v2.0.dmg
