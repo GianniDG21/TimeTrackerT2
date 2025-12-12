@@ -74,7 +74,7 @@ jobs:
         fi
         
     - name: Upload App Bundle
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: success()
       with:
         name: TimeTrackerT2-macOS-App
@@ -82,7 +82,7 @@ jobs:
         if-no-files-found: error
         
     - name: Upload DMG
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: success()
       with:
         name: TimeTrackerT2-macOS-DMG
