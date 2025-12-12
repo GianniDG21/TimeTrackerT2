@@ -1,0 +1,101 @@
+name: Build macOS App
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Permette di avviare manualmente
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install customtkinter pygame pyinstaller pillow
+        
+    - name: Verify project structure
+      run: |
+        ls -la
+        echo "=== Checking main files ==="
+        ls -la main_gui.py 2>/dev/null || echo "❌ main_gui.py not found"
+        ls -la subjects.json 2>/dev/null || echo "⚠️ subjects.json not found"
+        ls -la sessions.json 2>/dev/null || echo "⚠️ sessions.json not found"
+        
+    - name: Create missing JSON files
+      run: |
+        # Crea file JSON se non esistono
+        [ ! -f subjects.json ] && echo '[]' > subjects.json
+        [ ! -f sessions.json ] && echo '[]' > sessions.json
+        [ ! -f user_config.json ] && echo '{}' > user_config.json
+        [ ! -f goals.json ] && echo '[]' > goals.json
+        [ ! -f progress_notes.json ] && echo '{}' > progress_notes.json
+        
+    - name: Build macOS App
+      run: |
+        python scripts/build_macos.py --dmg
+        
+    - name: Verify build output
+      run: |
+        echo "=== Contents of release directory ==="
+        ls -la release/ || echo "No release directory found"
+        
+        if [ -d "release/TimeTrackerT2_v2.0.app" ]; then
+          echo "✅ App bundle created successfully"
+          du -sh release/TimeTrackerT2_v2.0.app
+        else
+          echo "❌ App bundle not found"
+        fi
+        
+        if [ -f "release/TimeTrackerT2_v2.0_macOS.dmg" ]; then
+          echo "✅ DMG file created successfully"
+          du -sh release/TimeTrackerT2_v2.0_macOS.dmg
+        else
+          echo "⚠️ DMG file not found"
+        fi
+        
+    - name: Upload App Bundle
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: TimeTrackerT2-macOS-App
+        path: release/TimeTrackerT2_v2.0.app
+        if-no-files-found: error
+        
+    - name: Upload DMG
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: TimeTrackerT2-macOS-DMG
+        path: release/TimeTrackerT2_v2.0_macOS.dmg
+        if-no-files-found: warn
+        
+    - name: Create Release (on tag)
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          release/TimeTrackerT2_v2.0_macOS.dmg
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
