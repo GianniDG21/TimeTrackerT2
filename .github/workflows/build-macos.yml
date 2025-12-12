@@ -41,11 +41,13 @@ jobs:
     - name: Create missing files
       run: |
         echo "=== Creating missing JSON files ==="
-        [ ! -f subjects.json ] && echo '[]' > subjects.json && echo "Created subjects.json"
-        [ ! -f sessions.json ] && echo '[]' > sessions.json && echo "Created sessions.json"
-        [ ! -f user_config.json ] && echo '{}' > user_config.json && echo "Created user_config.json"
-        [ ! -f goals.json ] && echo '[]' > goals.json && echo "Created goals.json"
-        [ ! -f progress_notes.json ] && echo '{}' > progress_notes.json && echo "Created progress_notes.json"
+        echo '[]' > subjects.json
+        echo '[]' > sessions.json
+        echo '{}' > user_config.json
+        echo '[]' > goals.json
+        echo '{}' > progress_notes.json
+        echo "Files created successfully"
+        ls -la *.json
         
     - name: Simple PyInstaller build
       run: |
